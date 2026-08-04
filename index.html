@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <base href="/gamehtml/" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GameHTML — Modern Oyun Launcher</title>
+  <meta name="description" content="GameHTML: çevrimiçi katalog, tek tıkla kurulum ve hızlı indirme sunan modern oyun launcher'ı. Oyunları ister siteden ister uygulamadan indir." />
+  <link rel="icon" href="favicon.png" type="image/png" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="nav">
+    <div class="wrap nav-inner">
+      <a class="brand" href="#/">
+        <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M7 10h10a2.5 2.5 0 0 1 2.5 2.5V14a2.5 2.5 0 0 1-2.5 2.5h-1.2a2 2 0 0 1-1.6-.8l-1-1.2h-2.4l-1 1.2a2 2 0 0 1-1.6.8H7A2.5 2.5 0 0 1 4.5 14v-1.5A2.5 2.5 0 0 1 7 10z"/>
+          <path d="M8 12.5v2M7 13.5h2"/>
+          <circle cx="15.5" cy="13.5" r="0.9" fill="currentColor" stroke="none"/>
+        </svg>
+        <span class="brand-name">Game<span class="accent">HTML</span></span>
+      </a>
+      <nav class="nav-links">
+        <a href="#/katalog">Katalog</a>
+        <a href="#/indir">İndir</a>
+        <a href="#/kurulum">Kurulum</a>
+        <a href="#/sss">SSS</a>
+      </nav>
+      <a class="btn btn-primary btn-sm nav-cta" href="#/indir">⬇ İndir</a>
+    </div>
+  </header>
+
+  <div id="updateBanner" class="update-banner" hidden></div>
+
+  <main>
+    <section data-view="home">
+      <div class="hero">
+        <div class="wrap hero-inner">
+          <div class="hero-badge"><span class="dot"></span> v1.0.0 · Ücretsiz</div>
+          <h1>Oyunlarını <span class="accent">tek yerden</span> yönet</h1>
+          <p class="hero-sub">GameHTML, oyunların için çevrimiçi katalog, tek tıkla kurulum ve hızlı indirme sunan modern bir masaüstü launcher'dır. Kur, tıkla, oyna.</p>
+          <div class="hero-cta">
+            <a id="dlZip" class="btn btn-primary btn-lg" href="downloads/GameHTML-1.0.0-installers.zip">⬇ Ücretsiz İndir</a>
+            <a class="btn btn-ghost btn-lg" href="#/katalog">🎮 Kataloğa Göz At</a>
+          </div>
+          <p class="hero-meta">Windows 10/11 · 64-bit · <span id="zipSize" class="dim">boyut hesaplanıyor…</span></p>
+        </div>
+      </div>
+
+      <section class="section" id="ozellikler">
+        <div class="wrap">
+          <h2 class="section-title">Neden GameHTML?</h2>
+          <div class="features">
+            <div class="feature"><div class="f-icon">🗂</div><h3>Çevrimiçi Katalog</h3><p>Oyunlar sunucudan otomatik gelir; sürüm ve dosya bilgileri her zaman güncel tutulur.</p></div>
+            <div class="feature"><div class="f-icon">⚡</div><h3>Tek Tıkla Kurulum</h3><p>İndirme + doğrulama + kurulum tek akışta. Arşivi elle açmana gerek yok.</p></div>
+            <div class="feature"><div class="f-icon">🔗</div><h3>Harici Bağlantı</h3><p>Dosya linki veya indirme sayfası; gerekirse tarayıcıda açıp oradan devam et.</p></div>
+            <div class="feature"><div class="f-icon">📶</div><h3>Çoklu İndirme</h3><p>Birden fazla dosyayı aynı anda indir, duraklat ve sürdür.</p></div>
+            <div class="feature"><div class="f-icon">🛡</div><h3>SHA-256 Doğrulama</h3><p>İnen dosyalar hash ile doğrulanır; bozuk kurulumlar engellenir.</p></div>
+            <div class="feature"><div class="f-icon">🌙</div><h3>Koyu Tema</h3><p>Oyun severlere göre tasarlanmış, göz yormayan arayüz.</p></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section section-cta">
+        <div class="wrap cta-inner">
+          <h2>Hemen başla</h2>
+          <p>Uygulamayı indir, sunucuna bağlan ve kataloğa göz atmaya başla.</p>
+          <a class="btn btn-primary btn-lg" href="#/indir">⬇ Uygulamayı İndir</a>
+        </div>
+      </section>
+    </section>
+
+    <section data-view="katalog" hidden>
+      <div class="wrap section">
+        <div class="catalog-head">
+          <div>
+            <h1 class="page-title">Oyun Kataloğu</h1>
+            <p class="page-sub" id="catalogCount">Yükleniyor…</p>
+          </div>
+          <select id="catFilter" class="select" onchange="window.app && app.applyFilter(this.value)">
+            <option value="">Tüm Kategoriler</option>
+          </select>
+        </div>
+        <div id="catalogGrid" class="grid">
+          <div class="loader"></div>
+        </div>
+      </div>
+    </section>
+
+    <section data-view="game" hidden>
+      <div class="wrap section" id="gameDetail"><div class="loader"></div></div>
+    </section>
+
+    <section data-view="indir" hidden>
+      <div class="wrap section">
+        <h1 class="page-title">Uygulamayı İndir</h1>
+        <p class="page-sub">Senin için en uygun paketi seç. Tüm paketler aynı uygulamayı içerir.</p>
+        <div class="downloads">
+          <a class="card card-featured" href="downloads/GameHTML-1.0.0-installers.zip">
+            <div class="card-tag">Önerilen</div>
+            <div class="card-icon">📦</div>
+            <h3>Tüm Kurulumlar (ZIP)</h3>
+            <p>Kurulum (EXE) + MSI, tek arşivde.</p>
+            <div class="card-size" id="zipCardSize">…</div>
+            <span class="btn btn-primary">ZIP İndir</span>
+          </a>
+          <a class="card" href="downloads/GameHTML_1.0.0_x64-setup.exe">
+            <div class="card-icon">⚙️</div>
+            <h3>Kurulum (EXE)</h3>
+            <p>NSIS kurulum sihirbazı. En kolay yol.</p>
+            <div class="card-size" id="exeSize">…</div>
+            <span class="btn btn-ghost">EXE İndir</span>
+          </a>
+          <a class="card" href="downloads/GameHTML_1.0.0_x64_en-US.msi">
+            <div class="card-icon">🏢</div>
+            <h3>MSI Paketi</h3>
+            <p>Kurumsal dağıtım için Windows Installer.</p>
+            <div class="card-size" id="msiSize">…</div>
+            <span class="btn btn-ghost">MSI İndir</span>
+          </a>
+          <a class="card" href="downloads/GameHTML-portable.exe">
+            <div class="card-icon">💾</div>
+            <h3>Taşınabilir (EXE)</h3>
+            <p>Kurulum gerektirmez; çift tıkla çalıştır.</p>
+            <div class="card-size" id="portableSize">…</div>
+            <span class="btn btn-ghost">EXE İndir</span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section data-view="kurulum" hidden>
+      <div class="wrap section">
+        <h1 class="page-title">Kurulum Adımları</h1>
+        <p class="page-sub">Uygulama birkaç dakika içinde çalışmaya hazır.</p>
+        <ol class="steps">
+          <li><b>1. İndir</b><p>Paketi yukarıdan indir; arşivi bir klasöre aç ya da kurulum EXE'sini çalıştır.</p></li>
+          <li><b>2. Kur</b><p>Kurulum sihirbazını takip et. Uygulama masaüstüne ve başlat menüsüne eklenir.</p></li>
+          <li><b>3. Sunucuya bağlan</b><p>İlk açılışta Ayarlar'dan oyun sunucusunun adresini gir (örn. http://192.168.1.20:3001).</p></li>
+          <li><b>4. Oyna</b><p>Kataloğa göz at, oyunları indir ve tek tıkla başlat.</p></li>
+        </ol>
+      </div>
+    </section>
+
+    <section data-view="sss" hidden>
+      <div class="wrap section">
+        <h1 class="page-title">Sık Sorulan Sorular</h1>
+        <div class="faq">
+          <details><summary>Uygulama ücretli mi?</summary><p>Hayır. GameHTML tamamen ücretsizdir.</p></details>
+          <details><summary>Hangi sistemlerde çalışır?</summary><p>Windows 10/11 (64-bit). Güncel bir WebView2 sürümü gereklidir; genellikle otomatik kurulur.</p></details>
+          <details><summary>Oyunlar nereden geliyor?</summary><p>Katalog, sunucudaki çevrimiçi API üzerinden güncel tutulur; oyunlar sunucuya eklenen linklerle yayınlanır.</p></details>
+          <details><summary>Oyunu siteden de indirebilir miyim?</summary><p>Evet. Harici bağlantılı oyunlar "Sayfada Aç" ile tarayıcıda açılır; yüklü dosyalı oyunlar ise doğrudan indirilebilir.</p></details>
+          <details><summary>İnternet bağlantısı olmadan kullanabilir miyim?</summary><p>Oyun listesi için sunucuya bağlantı gerekir; katalog alındıktan sonra cihazda önbellekte tutulur.</p></details>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="wrap footer-inner">
+      <div class="brand">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M7 10h10a2.5 2.5 0 0 1 2.5 2.5V14a2.5 2.5 0 0 1-2.5 2.5h-1.2a2 2 0 0 1-1.6-.8l-1-1.2h-2.4l-1 1.2a2 2 0 0 1-1.6.8H7A2.5 2.5 0 0 1 4.5 14v-1.5A2.5 2.5 0 0 1 7 10z"/>
+        </svg>
+        <span class="brand-name">Game<span class="accent">HTML</span></span>
+      </div>
+      <p class="footer-meta">v1.0.0 · © 2026 GameHTML</p>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
