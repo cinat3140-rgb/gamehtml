@@ -261,23 +261,7 @@
     window.scrollTo(0, 0);
   }
 
-  /* ---------- Download sizes (HEAD) ---------- */
-
-  var SIZE_IDS = { "downloads/GameHTML-1.0.0-installers.zip": "zipSize,zipCardSize", "downloads/GameHTML_1.0.0_x64-setup.exe": "exeSize", "downloads/GameHTML_1.0.0_x64_en-US.msi": "msiSize", "downloads/GameHTML-portable.exe": "portableSize" };
-
-  function fetchSizes() {
-    Object.keys(SIZE_IDS).forEach(function (url) {
-      fetch(url, { method: "HEAD" }).then(function (r) {
-        var len = r.headers.get("content-length");
-        if (!len) return;
-        var txt = fmtBytes(Number(len));
-        SIZE_IDS[url].split(",").forEach(function (id) {
-          var el = document.getElementById(id);
-          if (el) el.textContent = txt;
-        });
-      }).catch(function () {});
-    });
-  }
+  /* ---------- Download sizes (static, GitHub CDN compresses HEAD) ---------- */
 
   /* ---------- Public ---------- */
 
@@ -290,7 +274,6 @@
 
   window.addEventListener("hashchange", route);
   document.addEventListener("DOMContentLoaded", function () {
-    fetchSizes();
     fetchAppUpdate();
     route();
   });
