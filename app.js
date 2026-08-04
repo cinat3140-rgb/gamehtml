@@ -95,7 +95,7 @@
   }
 
   function fetchAppUpdate() {
-    fetch("/app-update.json", { headers: { Accept: "application/json" } })
+    fetch("app-update.json", { headers: { Accept: "application/json" } })
       .then(function (r) { return r.ok ? r.json() : null; })
       .then(function (d) {
         if (d && d.updateAvailable) renderUpdateBanner(d.latest);
