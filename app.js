@@ -1,9 +1,9 @@
 (function () {
   "use strict";
 
-  var state = { catalog: null, categoryId: null, error: null };
+  var state = { catalog: null, categoryId: null, error: null, search: "" };
 
-  var APP_VERSION = "1.0.0";
+  var APP_VERSION = "1.1.0";
 
   function $(sel, root) { return (root || document).querySelector(sel); }
   function $$(sel, root) { return Array.prototype.slice.call((root || document).querySelectorAll(sel)); }
@@ -64,6 +64,14 @@
   function filteredGames() {
     var games = (state.catalog && state.catalog.games) || [];
     if (state.categoryId) games = games.filter(function (g) { return g.categoryId === state.categoryId; });
+    if (state.search) {
+      var q = state.search.toLowerCase();
+      games = games.filter(function (g) {
+        return (g.title || "").toLowerCase().indexOf(q) !== -1 ||
+          (g.description || "").toLowerCase().indexOf(q) !== -1 ||
+          (g.genre || "").toLowerCase().indexOf(q) !== -1;
+      });
+    }
     return games;
   }
 
@@ -268,6 +276,10 @@
   window.app = {
     applyFilter: function (v) {
       state.categoryId = v ? Number(v) : null;
+      renderCatalog();
+    },
+    applySearch: function (v) {
+      state.search = (v || "").trim();
       renderCatalog();
     }
   };

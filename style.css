@@ -127,6 +127,12 @@ h1, h2, h3, p { margin: 0; }
 
 /* ---------- Catalog ---------- */
 .catalog-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; flex-wrap: wrap; }
+.catalog-controls { display: flex; gap: 10px; flex-wrap: wrap; }
+.search-input {
+  background: var(--bg-raised); color: var(--text); border: 1px solid var(--border);
+  border-radius: 10px; padding: 10px 14px; font-size: .92rem; outline: none; min-width: 220px;
+}
+.search-input:focus { border-color: var(--primary); }
 .select {
   background: var(--bg-raised); color: var(--text); border: 1px solid var(--border);
   border-radius: 10px; padding: 10px 14px; font-size: .92rem; cursor: pointer; outline: none;

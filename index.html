@@ -36,7 +36,7 @@
     <section data-view="home">
       <div class="hero">
         <div class="wrap hero-inner">
-          <div class="hero-badge"><span class="dot"></span> v1.0.0 · Ücretsiz</div>
+          <div class="hero-badge"><span class="dot"></span> v1.1.0 · Ücretsiz</div>
           <h1>Oyunlarını <span class="accent">tek yerden</span> yönet</h1>
           <p class="hero-sub">GameHTML, oyunların için çevrimiçi katalog, tek tıkla kurulum ve hızlı indirme sunan modern bir masaüstü launcher'dır. Kur, tıkla, oyna.</p>
           <div class="hero-cta">
@@ -77,9 +77,12 @@
             <h1 class="page-title">Oyun Kataloğu</h1>
             <p class="page-sub" id="catalogCount">Yükleniyor…</p>
           </div>
-          <select id="catFilter" class="select" onchange="window.app && app.applyFilter(this.value)">
-            <option value="">Tüm Kategoriler</option>
-          </select>
+          <div class="catalog-controls">
+            <input id="searchInput" class="search-input" type="search" placeholder="🔍 Oyun ara…" oninput="window.app && app.applySearch(this.value)" />
+            <select id="catFilter" class="select" onchange="window.app && app.applyFilter(this.value)">
+              <option value="">Tüm Kategoriler</option>
+            </select>
+          </div>
         </div>
         <div id="catalogGrid" class="grid">
           <div class="loader"></div>
@@ -164,7 +167,7 @@
         </svg>
         <span class="brand-name">Game<span class="accent">HTML</span></span>
       </div>
-      <p class="footer-meta">v1.0.0 · © 2026 GameHTML</p>
+      <p class="footer-meta">v1.1.0 · © 2026 GameHTML</p>
     </div>
   </footer>
 
