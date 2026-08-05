@@ -3,7 +3,7 @@
 
   var state = { catalog: null, categoryId: null, error: null, search: "" };
 
-  var APP_VERSION = "1.1.0";
+  var APP_VERSION = "1.2.0";
 
   function $(sel, root) { return (root || document).querySelector(sel); }
   function $$(sel, root) { return Array.prototype.slice.call((root || document).querySelectorAll(sel)); }
@@ -120,7 +120,7 @@
     var detail = '<a class="btn btn-ghost ' + cls + '" href="#/oyun/' + g.id + '">İncele</a>';
     if (!a.url) return detail;
     if (a.isExternal) {
-      return '<a class="btn btn-primary ' + cls + '" href="' + esc(a.url) + '" target="_blank" rel="noopener nofollow">🌐 Sayfada Aç</a>' + detail;
+      return '<a class="btn btn-primary ' + cls + '" href="' + esc(a.url) + '" target="_blank" rel="noopener nofollow">🌐 Sayfaya Git</a>' + detail;
     }
     return '<a class="btn btn-primary ' + cls + '" href="' + esc(a.url) + '" download>⬇ İndir</a>' + detail;
   }
@@ -183,8 +183,8 @@
     if (!a.url) {
       actionHtml = '<span class="dim" style="font-size:.9rem;text-align:center">Yakında</span>';
     } else if (a.isExternal) {
-      actionHtml = '<a class="btn btn-primary btn-lg" href="' + esc(a.url) + '" target="_blank" rel="noopener nofollow">🌐 Sayfada Aç</a>' +
-        '<span class="dim" style="font-size:.82rem;text-align:center">Oyun tarayıcıda açılır; dosyayı oradan indirip uygulamadan kurabilirsin.</span>';
+      actionHtml = '<a class="btn btn-primary btn-lg" href="' + esc(a.url) + '" target="_blank" rel="noopener nofollow">🌐 Sayfaya Git</a>' +
+        '<span class="dim" style="font-size:.82rem;text-align:center">Oyun tarayıcıda açılır; dosyayı oradan indirebilirsin.</span>';
     } else {
       actionHtml = '<a class="btn btn-primary btn-lg" href="' + esc(a.url) + '" download>⬇ İndir</a>' +
         '<span class="dim" style="font-size:.82rem;text-align:center">Dosyayı indir; uygulamada "Oyun Ekle" bölümünden kur.</span>';
