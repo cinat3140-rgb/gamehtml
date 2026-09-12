@@ -12,7 +12,8 @@
   <div class="site-switch">
     <div class="wrap site-switch-inner">
       <span class="site-switch-label">Diğer Siteler:</span>
-      <a class="site-link active" href="#" onclick="return false;">GameHTML</a>
+      <a class="site-link active" href="#" onclick="return false;">GameHTML (Tümü)</a>
+      <a class="site-link" href="https://cinat3140-rgb.github.io/pchtml/">PcHTML</a>
       <a class="site-link" href="https://cinat3140-rgb.github.io/torrenthtml/">TorrentHTML</a>
       <a class="site-link" href="https://cinat3140-rgb.github.io/apkhtml/">ApkHTML</a>
     </div>
@@ -86,6 +87,12 @@
           </div>
           <div class="catalog-controls">
             <input id="searchInput" class="search-input" type="search" placeholder="🔍 Oyun ara…" oninput="window.app && app.applySearch(this.value)" />
+            <select id="platformFilter" class="select" onchange="window.app && app.applyPlatform(this.value)">
+              <option value="all">Tüm Platformlar</option>
+              <option value="pc">🖥️ PC</option>
+              <option value="torrent">🌐 Torrent</option>
+              <option value="apk">🤖 APK</option>
+            </select>
             <select id="catFilter" class="select" onchange="window.app && app.applyFilter(this.value)">
               <option value="">Tüm Kategoriler</option>
             </select>

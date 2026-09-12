@@ -1,7 +1,7 @@
 (function () {
   "use strict";
 
-  var state = { catalog: null, categoryId: null, error: null, search: "" };
+  var state = { catalog: null, categoryId: null, platform: "all", error: null, search: "" };
 
   var APP_VERSION = "1.2.0";
 
@@ -64,6 +64,7 @@
   function filteredGames() {
     var games = (state.catalog && state.catalog.games) || [];
     if (state.categoryId) games = games.filter(function (g) { return g.categoryId === state.categoryId; });
+    if (state.platform !== "all") games = games.filter(function (g) { return (g.platform || "pc") === state.platform; });
     if (state.search) {
       var q = state.search.toLowerCase();
       games = games.filter(function (g) {
@@ -105,25 +106,45 @@
 
   /* ---------- Actions ---------- */
 
-  function primaryAction(g) {
-    var file = Array.isArray(g.latestFiles) && g.latestFiles.length ? g.latestFiles[0] : null;
-    var isExternal = file ? file.source === "external" : !!(g.externalUrl && !g.downloadUrl);
-    var url = isExternal
-      ? ((file && file.downloadUrl) || g.externalUrl)
-      : ((file && file.downloadUrl) || g.downloadUrl);
-    return { isExternal: isExternal, url: url || "" };
+  function platformInfo(g) {
+  var p = (g.platform || "pc");
+  if (p === "torrent") {
+    var t = g.torrent || {};
+    if (t.magnetUrl) return { label: "Torrent", badge: "TORRENT", url: t.magnetUrl, external: true, icon: "🧲", cta: "Magnet'i Aç", cls: "badge-torrent" };
+    if (t.torrentUrl) return { label: "Torrent", badge: "TORRENT", url: t.torrentUrl, external: true, icon: "⬇", cta: ".torrent İndir", cls: "badge-torrent" };
   }
+  if (p === "apk") {
+    var a = g.apk || {};
+    if (a.url) return { label: "APK", badge: "APK", url: a.url, external: true, icon: "📦", cta: "APK İndir", cls: "badge-apk" };
+  }
+  return null;
+}
 
-  function actionButtons(g, sizeClass) {
-    var a = primaryAction(g);
-    var cls = sizeClass || "";
-    var detail = '<a class="btn btn-ghost ' + cls + '" href="#/oyun/' + g.id + '">İncele</a>';
-    if (!a.url) return detail;
-    if (a.isExternal) {
-      return '<a class="btn btn-primary ' + cls + '" href="' + esc(a.url) + '" target="_blank" rel="noopener nofollow">🌐 Sayfaya Git</a>' + detail;
-    }
-    return '<a class="btn btn-primary ' + cls + '" href="' + esc(a.url) + '" download>⬇ İndir</a>' + detail;
+function primaryAction(g) {
+  var pi = platformInfo(g);
+  if (pi) return { isExternal: true, url: pi.url, platformExtra: pi };
+  var file = Array.isArray(g.latestFiles) && g.latestFiles.length ? g.latestFiles[0] : null;
+  var isExternal = file ? file.source === "external" : !!(g.externalUrl && !g.downloadUrl);
+  var url = isExternal
+    ? ((file && file.downloadUrl) || g.externalUrl)
+    : ((file && file.downloadUrl) || g.downloadUrl);
+  return { isExternal: isExternal, url: url || "", platformExtra: pi };
+}
+
+function actionButtons(g, sizeClass) {
+  var a = primaryAction(g);
+  var cls = sizeClass || "";
+  var detail = '<a class="btn btn-ghost ' + cls + '" href="#/oyun/' + g.id + '">İncele</a>';
+  if (!a.url) return detail;
+  var pi = a.platformExtra;
+  if (pi) {
+    return '<a class="btn btn-primary ' + cls + '" href="' + esc(a.url) + '" target="_blank" rel="noopener nofollow">' + pi.icon + " " + pi.cta + "</a>" + detail;
   }
+  if (a.isExternal) {
+    return '<a class="btn btn-primary ' + cls + '" href="' + esc(a.url) + '" target="_blank" rel="noopener nofollow">🌐 Sayfaya Git</a>' + detail;
+  }
+  return '<a class="btn btn-primary ' + cls + '" href="' + esc(a.url) + '" download>⬇ İndir</a>' + detail;
+}
 
   /* ---------- Rendering ---------- */
 
@@ -145,16 +166,21 @@
     var size = file ? fmtBytes(file.fileSize) : "-";
     var version = g.latestVersion ? g.latestVersion.version : (g.version || null);
     var featuredBadge = g.isFeatured ? '<span class="gcard-featured">★ Öne Çıkan</span>' : "";
+    var pi = primaryAction(g).platformExtra;
+    var platformBadge = pi
+      ? '<span class="gcard-platform ' + pi.cls + '">' + pi.badge + "</span>"
+      : "";
     var developer = g.developer ? g.developer : (g.publisher || "");
     var fileBadge = a.isExternal ? "🌐 Harici" : "";
-    var urlLabel = a.isExternal ? "Sayfaya Git" : "İndir";
-    var urlIcon = a.isExternal ? "🌐" : "⬇";
+    var urlLabel = a.isExternal ? (pi ? pi.cta : "Sayfaya Git") : "İndir";
+    var urlIcon = a.isExternal ? (pi ? pi.icon : "🌐") : "⬇";
     return (
       '<article class="gcard">' +
         '<a class="gcard-cover" href="#/oyun/' + g.id + '" aria-label="' + esc(g.title) + '">' +
           coverWithFallback(g) +
           '<span class="gcard-overlay"></span>' +
           (cat ? '<span class="gcard-cat">' + esc(cat) + "</span>" : "") +
+          platformBadge +
           featuredBadge +
           '<span class="gcard-play">' +
             '<svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M8 5.14v13.72a1 1 0 0 0 1.5.86l11-6.86a1 1 0 0 0 0-1.72l-11-6.86a1 1 0 0 0-1.5.86z"/></svg>' +
@@ -222,14 +248,39 @@
     var version = g.latestVersion ? g.latestVersion.version : (g.version || null);
     var releaseDate = g.releaseDate || (g.latestVersion && g.latestVersion.releasedAt);
     var tags = [];
+    if (pi) tags.push(pi.badge);
     if (cat) tags.push(cat);
     if (g.genre) tags.push(g.genre);
     if (version) tags.push("v" + version);
     if (g.membersOnly) tags.push("Üyelere Özel");
 
+    var extraInfo = "";
+    if (pi && pi.badge === "TORRENT") {
+      var t = g.torrent || {};
+      if (t.seeds != null) extraInfo += infoRow("Seeder", "▲ " + t.seeds);
+      if (t.leeches != null) extraInfo += infoRow("Leecher", "▼ " + t.leeches);
+      if (t.uploader) extraInfo += infoRow("Yükleyen", t.uploader);
+      if (t.sha256) extraInfo += '<div class="info-row"><span class="k">SHA-256</span><span class="v mono">' + esc(String(t.sha256).slice(0, 24)) + "…</span></div>";
+    }
+    if (pi && pi.badge === "APK") {
+      var ap = g.apk || {};
+      if (ap.androidVersion) extraInfo += infoRow("Android", ap.androidVersion);
+      if (ap.arch) extraInfo += infoRow("Mimari", ap.arch);
+      if (ap.packageName) extraInfo += infoRow("Paket", ap.packageName);
+      if (ap.permissions && ap.permissions.length) extraInfo += infoRow("İzinler", ap.permissions.join(", "));
+      if (ap.sha256) extraInfo += '<div class="info-row"><span class="k">SHA-256</span><span class="v mono">' + esc(String(ap.sha256).slice(0, 24)) + "…</span></div>";
+    }
+
+    var pi = platformInfo(g);
     var actionHtml = "";
     if (!a.url) {
       actionHtml = '<span class="dim" style="font-size:.9rem;text-align:center">Yakında</span>';
+    } else if (pi) {
+      var pNote = pi.badge === "TORRENT"
+        ? "Magnet linki torrent istemcinle aç; hız topluluğa bağlıdır."
+        : "APK'yı indir, Android cihazında kur ve oyna.";
+      actionHtml = '<a class="btn btn-primary btn-lg btn-block" href="' + esc(a.url) + '" target="_blank" rel="noopener nofollow">' + pi.icon + " " + pi.cta + "</a>" +
+        '<span class="dim" style="font-size:.82rem;text-align:center">' + pNote + "</span>";
     } else if (a.isExternal) {
       actionHtml = '<a class="btn btn-primary btn-lg btn-block" href="' + esc(a.url) + '" target="_blank" rel="noopener nofollow">🌐 Sayfaya Git</a>' +
         '<span class="dim" style="font-size:.82rem;text-align:center">Oyun tarayıcıda açılır; dosyayı oradan indirebilirsin.</span>';
@@ -245,11 +296,13 @@
     var infoRows =
       (g.developer ? infoRow("Geliştirici", g.developer) : "") +
       (g.publisher ? infoRow("Yayıncı", g.publisher) : "") +
+      infoRow("Platform", (g.platform || "pc").toUpperCase()) +
       infoRow("Kategori", cat || "—") +
       infoRow("Sürüm", version || "—") +
-      infoRow("Boyut", fmtBytes(file && file.fileSize)) +
+      infoRow("Boyut", fmtBytes((g.torrent && g.torrent.fileSize) || (g.apk && g.apk.fileSize) || (file && file.fileSize))) +
       infoRow("Yayın Tarihi", fmtDate(releaseDate)) +
-      (file && file.fileName ? infoRow("Dosya", file.fileName) : "");
+      (file && file.fileName ? infoRow("Dosya", file.fileName) : "") +
+      extraInfo;
 
     el.innerHTML =
       '<div class="detail-head">' +
@@ -330,6 +383,10 @@
   window.app = {
     applyFilter: function (v) {
       state.categoryId = v ? Number(v) : null;
+      renderCatalog();
+    },
+    applyPlatform: function (v) {
+      state.platform = v || "all";
       renderCatalog();
     },
     applySearch: function (v) {
