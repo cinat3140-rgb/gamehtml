@@ -252,10 +252,8 @@
       (file && file.fileName ? infoRow("Dosya", file.fileName) : "");
 
     el.innerHTML =
-      '<div class="detail-hero">' +
-        (g.bannerUrl || g.coverUrl ? '<div class="detail-hero-bg"><img src="' + esc(g.bannerUrl || g.coverUrl) + '" alt="" /></div>' : "") +
-        '<div class="detail-hero-shade"></div>' +
-        '<div class="wrap detail-hero-inner">' +
+      '<div class="detail-head">' +
+          (g.bannerUrl && !g.coverUrl ? '<div class="detail-hero-bg"><img src="' + esc(g.bannerUrl) + '" alt="" /></div>' : "") +
           '<div class="detail-cover-wrap">' + coverWithFallback(g) + (g.isFeatured ? '<span class="gcard-featured">★ Öne Çıkan</span>' : "") + "</div>" +
           '<div class="detail-titleblock">' +
             '<h1>' + esc(g.title) + "</h1>" +
@@ -263,7 +261,6 @@
             '<div class="detail-tags">' + tags.map(function (t) { return '<span class="tag">' + esc(t) + "</span>"; }).join("") + "</div>" +
             '<div class="detail-cta">' + actionHtml + "</div>" +
           "</div>" +
-        "</div>" +
       "</div>" +
       '<div class="wrap detail-body">' +
         "<div class='detail-main'>" +
@@ -299,7 +296,7 @@
   function route() {
     var r = parseHash();
     if (VIEWS.indexOf(r.view) === -1) { location.hash = "#/"; return; }
-    var activeView = r.view === "game" ? "katalog" : r.view;
+    var activeView = r.view;
     $$("[data-view]").forEach(function (el) {
       el.hidden = el.getAttribute("data-view") !== activeView;
     });
