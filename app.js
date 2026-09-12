@@ -133,25 +133,49 @@
     return null;
   }
 
+  function coverWithFallback(g) {
+    if (g.coverUrl) return '<img class="gcard-cover-img" src="' + esc(g.coverUrl) + '" alt="' + esc(g.title) + '" loading="lazy" />';
+    return '<div class="placeholder">🎮</div>';
+  }
+
   function card(g) {
+    var a = primaryAction(g);
     var cat = categoryName(g.categoryId);
     var file = Array.isArray(g.latestFiles) && g.latestFiles.length ? g.latestFiles[0] : null;
-    var meta = [];
-    if (cat) meta.push(cat);
-    if (g.genre) meta.push(g.genre);
     var size = file ? fmtBytes(file.fileSize) : "-";
+    var version = g.latestVersion ? g.latestVersion.version : (g.version || null);
+    var featuredBadge = g.isFeatured ? '<span class="gcard-featured">★ Öne Çıkan</span>' : "";
+    var developer = g.developer ? g.developer : (g.publisher || "");
+    var fileBadge = a.isExternal ? "🌐 Harici" : "";
+    var urlLabel = a.isExternal ? "Sayfaya Git" : "İndir";
+    var urlIcon = a.isExternal ? "🌐" : "⬇";
     return (
-      '<a class="gcard" href="#/oyun/' + g.id + '">' +
-        '<div class="gcard-cover">' + img(g.coverUrl, "", g.title) +
+      '<article class="gcard">' +
+        '<a class="gcard-cover" href="#/oyun/' + g.id + '" aria-label="' + esc(g.title) + '">' +
+          coverWithFallback(g) +
+          '<span class="gcard-overlay"></span>' +
           (cat ? '<span class="gcard-cat">' + esc(cat) + "</span>" : "") +
-        "</div>" +
+          featuredBadge +
+          '<span class="gcard-play">' +
+            '<svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M8 5.14v13.72a1 1 0 0 0 1.5.86l11-6.86a1 1 0 0 0 0-1.72l-11-6.86a1 1 0 0 0-1.5.86z"/></svg>' +
+          "</span>" +
+        "</a>" +
         '<div class="gcard-body">' +
-          '<div class="gcard-title">' + esc(g.title) + "</div>" +
-          '<div class="gcard-meta">' + (meta.join(" • ") || "—") + "</div>" +
-          '<div class="gcard-meta">' + size + (g.version ? " • v" + esc(g.version) : "") + (g.updatedAt ? " • " + fmtDate(g.updatedAt) : "") + "</div>" +
-          '<div class="gcard-actions">' + actionButtons(g, "btn-sm") + "</div>" +
+          '<a class="gcard-title" href="#/oyun/' + g.id + '">' + esc(g.title) + "</a>" +
+          (developer ? '<div class="gcard-dev">' + esc(developer) + "</div>" : "") +
+          '<div class="gcard-meta">' +
+            '<span class="gcard-size">' + size + "</span>" +
+            (version ? '<span class="gcard-ver">v' + esc(version) + "</span>" : "") +
+            (fileBadge ? '<span class="gcard-ext">' + fileBadge + "</span>" : "") +
+          "</div>" +
+          '<div class="gcard-actions">' +
+            (a.url
+              ? '<a class="btn btn-primary btn-sm" href="' + esc(a.url) + '" target="_blank" rel="noopener nofollow">' + urlIcon + " " + urlLabel + "</a>"
+              : '<span class="btn btn-ghost btn-sm" style="cursor:default">Yakında</span>') +
+            '<a class="btn btn-ghost btn-sm" href="#/oyun/' + g.id + '">İncele</a>' +
+          "</div>" +
         "</div>" +
-      "</a>"
+      "</article>"
     );
   }
 
@@ -167,9 +191,27 @@
     grid.innerHTML = games.map(card).join("");
   }
 
+  function renderRequirements(requirements) {
+    if (!requirements) return "";
+    var min = requirements.minimum;
+    var rec = requirements.recommended;
+    function reqTable(title, obj) {
+      if (!obj) return "";
+      var keys = Object.keys(obj);
+      if (!keys.length) return "";
+      var rows = keys.map(function (k) {
+        return '<div class="req-row"><span class="k">' + esc(k) + "</span><span class='v'>" + esc(obj[k]) + "</span></div>";
+      }).join("");
+      return '<div class="req-col"><div class="req-title">' + esc(title) + "</div>" + rows + "</div>";
+    }
+    var cols = reqTable("Minimum", min) + reqTable("Önerilen", rec);
+    if (!cols) return "";
+    return '<div class="require"><h4>Sistem Gereksinimleri</h4><div class="req-grid">' + cols + "</div></div>";
+  }
+
   function renderGame(id) {
     var el = $("#gameDetail");
-    var g = state.catalog && state.catalog.games.find(function (x) { return x.id === id; });
+    var g = state.catalog && state.catalog.games.find(function (x) { return Number(x.id) === Number(id); });
     if (!g) {
       el.innerHTML = '<div class="empty">Oyun bulunamadı. <a href="#/katalog" style="color:var(--accent)">Kataloğa dön</a></div>';
       return;
@@ -177,52 +219,69 @@
     var a = primaryAction(g);
     var file = Array.isArray(g.latestFiles) && g.latestFiles.length ? g.latestFiles[0] : null;
     var cat = categoryName(g.categoryId);
-    var tags = [g.genre, g.version ? "v" + g.version : null, g.platform].filter(Boolean);
-    if (cat) tags.unshift(cat);
+    var version = g.latestVersion ? g.latestVersion.version : (g.version || null);
+    var releaseDate = g.releaseDate || (g.latestVersion && g.latestVersion.releasedAt);
+    var tags = [];
+    if (cat) tags.push(cat);
+    if (g.genre) tags.push(g.genre);
+    if (version) tags.push("v" + version);
+    if (g.membersOnly) tags.push("Üyelere Özel");
+
     var actionHtml = "";
     if (!a.url) {
       actionHtml = '<span class="dim" style="font-size:.9rem;text-align:center">Yakında</span>';
     } else if (a.isExternal) {
-      actionHtml = '<a class="btn btn-primary btn-lg" href="' + esc(a.url) + '" target="_blank" rel="noopener nofollow">🌐 Sayfaya Git</a>' +
+      actionHtml = '<a class="btn btn-primary btn-lg btn-block" href="' + esc(a.url) + '" target="_blank" rel="noopener nofollow">🌐 Sayfaya Git</a>' +
         '<span class="dim" style="font-size:.82rem;text-align:center">Oyun tarayıcıda açılır; dosyayı oradan indirebilirsin.</span>';
     } else {
-      actionHtml = '<a class="btn btn-primary btn-lg" href="' + esc(a.url) + '" download>⬇ İndir</a>' +
+      actionHtml = '<a class="btn btn-primary btn-lg btn-block" href="' + esc(a.url) + '" download>⬇ İndir</a>' +
         '<span class="dim" style="font-size:.82rem;text-align:center">Dosyayı indir; uygulamada "Oyun Ekle" bölümünden kur.</span>';
     }
     var screens = Array.isArray(g.screenshots) && g.screenshots.length
       ? '<div class="screens"><div class="screens-title">Ekran Görüntüleri</div><div class="screens-grid">' +
-        g.screenshots.map(function (s) { return img(s, "", g.title); }).join("") + "</div></div>"
+        g.screenshots.map(function (s) { return '<img class="shot" src="' + esc(s) + '" alt="' + esc(g.title) + ' görüntüsü" loading="lazy" />'; }).join("") + "</div></div>"
       : "";
 
+    var infoRows =
+      (g.developer ? infoRow("Geliştirici", g.developer) : "") +
+      (g.publisher ? infoRow("Yayıncı", g.publisher) : "") +
+      infoRow("Kategori", cat || "—") +
+      infoRow("Sürüm", version || "—") +
+      infoRow("Boyut", fmtBytes(file && file.fileSize)) +
+      infoRow("Yayın Tarihi", fmtDate(releaseDate)) +
+      (file && file.fileName ? infoRow("Dosya", file.fileName) : "");
+
     el.innerHTML =
-      '<div class="detail-banner">' + img(g.bannerUrl || g.coverUrl, "banner", g.title) +
-        '<div class="detail-head">' +
-          img(g.coverUrl, "detail-cover", g.title) +
+      '<div class="detail-hero">' +
+        (g.bannerUrl || g.coverUrl ? '<div class="detail-hero-bg"><img src="' + esc(g.bannerUrl || g.coverUrl) + '" alt="" /></div>' : "") +
+        '<div class="detail-hero-shade"></div>' +
+        '<div class="wrap detail-hero-inner">' +
+          '<div class="detail-cover-wrap">' + coverWithFallback(g) + (g.isFeatured ? '<span class="gcard-featured">★ Öne Çıkan</span>' : "") + "</div>" +
           '<div class="detail-titleblock">' +
             '<h1>' + esc(g.title) + "</h1>" +
+            (g.developer ? '<div class="detail-dev">' + esc(g.developer) + "</div>" : "") +
             '<div class="detail-tags">' + tags.map(function (t) { return '<span class="tag">' + esc(t) + "</span>"; }).join("") + "</div>" +
+            '<div class="detail-cta">' + actionHtml + "</div>" +
           "</div>" +
         "</div>" +
       "</div>" +
-      '<div class="detail-body">' +
-        "<div>" +
+      '<div class="wrap detail-body">' +
+        "<div class='detail-main'>" +
+          (g.shortDescription ? '<p class="detail-short">' + esc(g.shortDescription) + "</p>" : "") +
+          '<div class="detail-desc-title">Hakkında</div>' +
           '<p class="detail-desc">' + esc(g.description || "Açıklama eklenmemiş.") + "</p>" +
           screens +
         "</div>" +
         '<aside class="detail-panel">' +
-          '<div class="detail-actions">' + actionHtml + "</div>" +
-          '<div style="margin-top:18px">' +
-            '<div class="info-row"><span class="k">Dosya</span><span class="v">' + esc((file && file.fileName) || "-") + "</span></div>" +
-            '<div class="info-row"><span class="k">Boyut</span><span class="v">' + fmtBytes(file && file.fileSize) + "</span></div>" +
-            '<div class="info-row"><span class="k">Kaynak</span><span class="v">' + esc(a.isExternal ? "Harici link" : "Sunucu") + "</span></div>" +
-            '<div class="info-row"><span class="k">Kategori</span><span class="v">' + esc(cat || "—") + "</span></div>" +
-            '<div class="info-row"><span class="k">Güncelleme</span><span class="v">' + fmtDate(g.updatedAt) + "</span></div>" +
-          "</div>" +
-          (g.requirements
-            ? '<div class="require"><h4>Sistem Gereksinimleri</h4><p>' + esc(g.requirements) + "</p></div>"
-            : "") +
+          '<div class="detail-panel-title">Oyun Bilgileri</div>' +
+          '<div class="info-list">' + infoRows + "</div>" +
+          renderRequirements(g.requirements) +
         "</aside>" +
       "</div>";
+  }
+
+  function infoRow(k, v) {
+    return '<div class="info-row"><span class="k">' + esc(k) + "</span><span class='v'>" + esc(v) + "</span></div>";
   }
 
   /* ---------- Router ---------- */
