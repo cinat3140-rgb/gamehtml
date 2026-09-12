@@ -48,6 +48,15 @@ h1, h2, h3, p { margin: 0; }
 }
 .nav-inner { display: flex; align-items: center; gap: 28px; height: 62px; }
 .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 1.15rem; letter-spacing: .2px; }
+
+/* ---------- Site switcher ---------- */
+.site-switch { background: var(--bg-soft); border-bottom: 1px solid var(--border); }
+.site-switch-inner { display: flex; align-items: center; gap: 6px; height: 38px; max-width: 1080px; margin: 0 auto; padding: 0 24px; flex-wrap: wrap; }
+.site-switch-label { font-size: .74rem; font-weight: 700; color: var(--text-dim); margin-right: 4px; }
+.site-link { font-size: .74rem; font-weight: 700; color: var(--text-dim); padding: 4px 11px; border-radius: 999px; border: 1px solid transparent; transition: all .14s; white-space: nowrap; }
+.site-link:hover { color: var(--text); background: var(--bg-raised); border-color: var(--border); }
+.site-link.active { color: #fff; background: var(--primary); border-color: var(--primary); }
+.site-link.active:hover { color: #fff; }
 .nav-links { display: flex; gap: 22px; margin-left: auto; }
 .nav-links a { color: var(--text-dim); font-size: .95rem; transition: color .15s; }
 .nav-links a:hover { color: var(--text); }
