@@ -3,7 +3,7 @@
 
   var state = { catalog: null, categoryId: null, platform: "all", error: null, search: "" };
 
-  var APP_VERSION = "1.3.1";
+  var APP_VERSION = "1.4.1";
 
   function $(sel, root) { return (root || document).querySelector(sel); }
   function $$(sel, root) { return Array.prototype.slice.call((root || document).querySelectorAll(sel)); }
@@ -99,7 +99,7 @@
     fetch("app-update.json", { headers: { Accept: "application/json" } })
       .then(function (r) { return r.ok ? r.json() : null; })
       .then(function (d) {
-        if (d && d.updateAvailable) renderUpdateBanner(d.latest);
+        if (d && d.updateAvailable && d.latest && d.latest.version !== APP_VERSION) renderUpdateBanner(d.latest);
       })
       .catch(function () {});
   }
