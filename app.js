@@ -3,7 +3,7 @@
 
   var state = { catalog: null, categoryId: null, platform: "all", error: null, search: "" };
 
-  var APP_VERSION = "1.2.0";
+  var APP_VERSION = "1.3.0";
 
   function $(sel, root) { return (root || document).querySelector(sel); }
   function $$(sel, root) { return Array.prototype.slice.call((root || document).querySelectorAll(sel)); }
@@ -37,7 +37,7 @@
   /* ---------- Catalog data ---------- */
 
   function fetchCatalog() {
-    return fetch("catalog.json", { headers: { Accept: "application/json" } })
+    return fetch("catalog.json?v=" + Date.now(), { headers: { Accept: "application/json" }, cache: "no-store" })
       .then(function (r) {
         if (!r.ok) throw new Error("Katalog alınamadı (HTTP " + r.status + ")");
         return r.json();
