@@ -1,9 +1,9 @@
 (function () {
   "use strict";
 
-  var state = { catalog: null, categoryId: null, platform: "all", error: null, search: "" };
+  var state = { catalog: null, categoryId: null, platform: "all", error: null, search: "", sort: "default" };
 
-  var APP_VERSION = "1.4.1";
+  var APP_VERSION = "1.4.2";
 
   function $(sel, root) { return (root || document).querySelector(sel); }
   function $$(sel, root) { return Array.prototype.slice.call((root || document).querySelectorAll(sel)); }
@@ -72,6 +72,17 @@
           (g.description || "").toLowerCase().indexOf(q) !== -1 ||
           (g.genre || "").toLowerCase().indexOf(q) !== -1;
       });
+    }
+    if (state.sort === "popular") {
+      games = games.slice().sort(function (a, b) { return (b.popularity || 0) - (a.popularity || 0); });
+    } else if (state.sort === "new") {
+      games = games.slice().sort(function (a, b) {
+        var da = a.releaseDate || (a.latestVersion && a.latestVersion.releasedAt) || "";
+        var db = b.releaseDate || (b.latestVersion && b.latestVersion.releasedAt) || "";
+        return db.localeCompare(da);
+      });
+    } else if (state.sort === "az") {
+      games = games.slice().sort(function (a, b) { return (a.title || "").localeCompare(b.title || "", "tr"); });
     }
     return games;
   }
@@ -159,6 +170,17 @@ function actionButtons(g, sizeClass) {
     return '<div class="placeholder">🎮</div>';
   }
 
+  function statsHtml(g) {
+    var st = g.stats || {};
+    var views = st.views || g.popularity || 0;
+    var dl = st.downloads || 0;
+    var parts = [];
+    if (views > 0) parts.push('<span class="stat-views">' + views.toLocaleString("tr-TR") + " görüntülenme</span>");
+    if (dl > 0) parts.push('<span class="stat-downloads">' + dl.toLocaleString("tr-TR") + " indirme</span>");
+    if (g.isFeatured) parts.push('<span class="stat-views stat-popular">Popüler</span>');
+    return parts.length ? '<div class="gcard-stats">' + parts.join("") + "</div>" : "";
+  }
+
   function card(g) {
     var a = primaryAction(g);
     var cat = categoryName(g.categoryId);
@@ -194,6 +216,7 @@ function actionButtons(g, sizeClass) {
             (version ? '<span class="gcard-ver">v' + esc(version) + "</span>" : "") +
             (fileBadge ? '<span class="gcard-ext">' + fileBadge + "</span>" : "") +
           "</div>" +
+          statsHtml(g) +
           '<div class="gcard-actions">' +
             (a.url
               ? '<a class="btn btn-primary btn-sm" href="' + esc(a.url) + '" target="_blank" rel="noopener nofollow">' + urlIcon + " " + urlLabel + "</a>"
@@ -293,6 +316,7 @@ function actionButtons(g, sizeClass) {
         g.screenshots.map(function (s) { return '<img class="shot" src="' + esc(s) + '" alt="' + esc(g.title) + ' görüntüsü" loading="lazy" />'; }).join("") + "</div></div>"
       : "";
 
+    var gStats = g.stats || {};
     var infoRows =
       (g.developer ? infoRow("Geliştirici", g.developer) : "") +
       (g.publisher ? infoRow("Yayıncı", g.publisher) : "") +
@@ -302,6 +326,8 @@ function actionButtons(g, sizeClass) {
       infoRow("Boyut", fmtBytes((g.torrent && g.torrent.fileSize) || (g.apk && g.apk.fileSize) || (file && file.fileSize))) +
       infoRow("Yayın Tarihi", fmtDate(releaseDate)) +
       (file && file.fileName ? infoRow("Dosya", file.fileName) : "") +
+      (gStats.downloads ? infoRow("İndirme", gStats.downloads.toLocaleString("tr-TR")) : "") +
+      (gStats.views || g.popularity ? infoRow("Görüntülenme", (gStats.views || g.popularity).toLocaleString("tr-TR")) : "") +
       extraInfo;
 
     el.innerHTML =
@@ -378,6 +404,58 @@ function actionButtons(g, sizeClass) {
     window.scrollTo(0, 0);
   }
 
+  /* ---------- Theme ---------- */
+  function initTheme() {
+    var saved = localStorage.getItem("gl.theme");
+    var theme = saved || (window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark");
+    applyTheme(theme);
+    var btn = $("#themeToggle");
+    if (btn) btn.textContent = theme === "light" ? "☀️" : "🌙";
+  }
+  function applyTheme(t) {
+    document.documentElement.setAttribute("data-theme", t);
+    localStorage.setItem("gl.theme", t);
+    var btn = $("#themeToggle");
+    if (btn) btn.textContent = t === "light" ? "☀️" : "🌙";
+  }
+  function toggleTheme() {
+    var cur = document.documentElement.getAttribute("data-theme") || "dark";
+    applyTheme(cur === "dark" ? "light" : "dark");
+  }
+
+  /* ---------- News banner ---------- */
+  function fetchNews() {
+    fetch("news.json", { cache: "no-store" }).then(function (r) { return r.ok ? r.json() : null; }).then(function (data) {
+      if (!data || !data.title) return;
+      var dismissed = {};
+      try { dismissed = JSON.parse(localStorage.getItem("gl.newsDismiss") || "{}"); } catch (e) {}
+      if (dismissed[data.title]) return;
+      var el = $("#newsBanner");
+      var txt = $("#newsText");
+      if (!el || !txt) return;
+      txt.innerHTML = "<strong>" + esc(data.title) + "</strong>" + (data.body ? " — " + data.body : "");
+      el.hidden = false;
+    }).catch(function () {});
+  }
+  function dismissNews() {
+    var el = $("#newsBanner");
+    if (el) el.hidden = true;
+    fetch("news.json", { cache: "no-store" }).then(function (r) { return r.ok ? r.json() : null; }).then(function (data) {
+      if (!data || !data.title) return;
+      var d = {};
+      try { d = JSON.parse(localStorage.getItem("gl.newsDismiss") || "{}"); } catch (e) {}
+      d[data.title] = true;
+      localStorage.setItem("gl.newsDismiss", JSON.stringify(d));
+    }).catch(function () {});
+  }
+
+  /* ---------- Feedback ---------- */
+  function openFeedback() {
+    var subject = encodeURIComponent("GameHTML v" + APP_VERSION + " Geri Bildirim");
+    var body = encodeURIComponent("Uygulama/Site: GameHTML\nSürüm: " + APP_VERSION + "\nTarayıcı: " + navigator.userAgent + "\n\nMesajınız:");
+    window.open("mailto:cinat3140@gmail.com?subject=" + subject + "&body=" + body, "_blank");
+  }
+
   /* ---------- Public ---------- */
 
   window.app = {
@@ -392,15 +470,27 @@ function actionButtons(g, sizeClass) {
     applySearch: function (v) {
       state.search = (v || "").trim();
       renderCatalog();
+    },
+    applySort: function (v) {
+      state.sort = v || "default";
+      renderCatalog();
     }
   };
 
   window.addEventListener("hashchange", route);
   document.addEventListener("DOMContentLoaded", function () {
+    initTheme();
     fetchAppUpdate();
+    fetchNews();
     route();
+    var themeBtn = $("#themeToggle");
+    if (themeBtn) themeBtn.addEventListener("click", toggleTheme);
+    var newsClose = $("#newsClose");
+    if (newsClose) newsClose.addEventListener("click", dismissNews);
+    var feedbackBtn = $("#feedbackBtn");
+    if (feedbackBtn) feedbackBtn.addEventListener("click", openFeedback);
   });
-  if (document.readyState !== "loading") route();
+  if (document.readyState !== "loading") { initTheme(); }
 
   /* Simple lightbox for screenshots */
   document.addEventListener("click", function (e) {

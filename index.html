@@ -36,8 +36,17 @@
         <a href="#/sss">SSS</a>
       </nav>
       <a class="btn btn-primary btn-sm nav-cta" href="#/indir">⬇ İndir</a>
+      <button id="themeToggle" class="btn btn-ghost btn-sm theme-toggle" title="Tema Değiştir" aria-label="Tema değiştir">🌙</button>
     </div>
   </header>
+
+  <div id="newsBanner" class="news-banner" hidden>
+    <div class="wrap news-banner-inner">
+      <span class="news-ico">📢</span>
+      <div class="news-text" id="newsText"></div>
+      <button class="news-close" id="newsClose" aria-label="Kapat">✕</button>
+    </div>
+  </div>
 
   <div id="updateBanner" class="update-banner" hidden></div>
 
@@ -45,14 +54,14 @@
     <section data-view="home">
       <div class="hero">
         <div class="wrap hero-inner">
-          <div class="hero-badge"><span class="dot"></span> v1.4.1 · Ücretsiz</div>
+          <div class="hero-badge"><span class="dot"></span> v1.4.2 · Ücretsiz</div>
           <h1>Oyunlarını <span class="accent">tek yerden</span> yönet</h1>
           <p class="hero-sub">GameHTML, oyunların için çevrimiçi katalog ve tek tıkla oyun açma sunan modern bir masaüstü launcher'dır. Kur, tıkla, oyna.</p>
           <div class="hero-cta">
-            <a id="dlZip" class="btn btn-primary btn-lg" href="downloads/GameHTML_1.4.1_x64-setup.exe">⬇ Ücretsiz İndir</a>
+            <a id="dlZip" class="btn btn-primary btn-lg" href="downloads/GameHTML_1.4.2_x64-setup.exe">⬇ Ücretsiz İndir</a>
             <a class="btn btn-ghost btn-lg" href="#/katalog">🎮 Kataloğa Göz At</a>
           </div>
-          <p class="hero-meta">Windows 10/11 · 64-bit · <span id="zipSize" class="dim">4.7 MB</span></p>
+          <p class="hero-meta">Windows 10/11 · 64-bit · <span id="zipSize" class="dim">2.6 MB</span></p>
         </div>
       </div>
 
@@ -97,6 +106,12 @@
             <select id="catFilter" class="select" onchange="window.app && app.applyFilter(this.value)">
               <option value="">Tüm Kategoriler</option>
             </select>
+            <select id="sortFilter" class="select" onchange="window.app && app.applySort(this.value)">
+              <option value="default">Sıralama</option>
+              <option value="popular">🔥 Popüler</option>
+              <option value="new">🕐 Yeni</option>
+              <option value="az">🔤 Alfabetik</option>
+            </select>
           </div>
         </div>
         <div id="catalogGrid" class="grid">
@@ -114,22 +129,22 @@
         <h1 class="page-title">Uygulamayı İndir</h1>
         <p class="page-sub">Senin için en uygun paketi seç. Tüm paketler aynı uygulamayı içerir.</p>
         <div class="downloads">
-          <a class="card card-featured" href="downloads/GameHTML-1.4.1-installers.zip">
+          <a class="card card-featured" href="downloads/GameHTML-1.4.2-installers.zip">
             <div class="card-tag">Önerilen</div>
             <div class="card-icon">📦</div>
             <h3>Tüm Kurulumlar (ZIP)</h3>
             <p>Kurulum (EXE) + MSI, tek arşivde.</p>
-            <div class="card-size" id="zipCardSize">2.7 MB</div>
+            <div class="card-size" id="zipCardSize">2.6 MB</div>
             <span class="btn btn-primary">ZIP İndir</span>
           </a>
-          <a class="card" href="downloads/GameHTML_1.4.1_x64-setup.exe">
+          <a class="card" href="downloads/GameHTML_1.4.2_x64-setup.exe">
             <div class="card-icon">⚙️</div>
             <h3>Kurulum (EXE)</h3>
             <p>NSIS kurulum sihirbazı. En kolay yol.</p>
             <div class="card-size" id="exeSize">1.2 MB</div>
             <span class="btn btn-ghost">EXE İndir</span>
           </a>
-          <a class="card" href="downloads/GameHTML_1.4.1_x64_en-US.msi">
+          <a class="card" href="downloads/GameHTML_1.4.2_x64_en-US.msi">
             <div class="card-icon">🏢</div>
             <h3>MSI Paketi</h3>
             <p>Kurumsal dağıtım için Windows Installer.</p>
@@ -140,7 +155,7 @@
             <div class="card-icon">💾</div>
             <h3>Taşınabilir (EXE)</h3>
             <p>Kurulum gerektirmez; çift tıkla çalıştır.</p>
-            <div class="card-size" id="portableSize">3.3 MB</div>
+            <div class="card-size" id="portableSize">3.1 MB</div>
             <span class="btn btn-ghost">EXE İndir</span>
           </a>
         </div>
@@ -188,9 +203,11 @@
         <a href="#/kurulum">Kurulum</a>
         <a href="#/sss">SSS</a>
       </nav>
-      <p class="footer-meta">v1.4.1 · © 2026 GameHTML</p>
+      <p class="footer-meta">v1.4.2 · © 2026 GameHTML</p>
     </div>
   </footer>
+
+  <button id="feedbackBtn" class="feedback-fab" title="Geri Bildirim & Hata Bildir">💬</button>
 
   <script src="app.js"></script>
 </body>
