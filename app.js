@@ -1,12 +1,38 @@
 (function () {
   "use strict";
 
-  var state = { catalog: null, categoryId: null, platform: "all", error: null, search: "", sort: "default" };
+  var state = { catalog: null, categoryId: null, platform: "all", error: null, search: "", sort: "default", metricsUrl: null };
 
   var APP_VERSION = "1.4.2";
 
   function $(sel, root) { return (root || document).querySelector(sel); }
   function $$(sel, root) { return Array.prototype.slice.call((root || document).querySelectorAll(sel)); }
+
+  function metric(type, gameId) {
+    if (!state.metricsUrl || !gameId || isNaN(Number(gameId))) return;
+    fetch(state.metricsUrl.replace(/\/$/, "") + "/" + type, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ gameId: Number(gameId) })
+    }).catch(function () {});
+  }
+
+  function refreshStats() {
+    if (!state.metricsUrl || !state.catalog) return Promise.resolve();
+    var games = state.catalog.games || [];
+    var ids = games.map(function (g) { return g.id; }).filter(function (id) { return /^\d+$/.test(String(id)); });
+    if (!ids.length) return Promise.resolve();
+    return fetch(state.metricsUrl.replace(/\/$/, "") + "?ids=" + ids.join(","), { cache: "no-store" })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (map) {
+        if (!map) return;
+        games.forEach(function (g) {
+          var s = map[String(g.id)];
+          if (s) g.stats = { views: s.views, downloads: s.downloads };
+        });
+      })
+      .catch(function () {});
+  }
 
   function esc(s) {
     return String(s == null ? "" : s)
@@ -44,8 +70,9 @@
       })
       .then(function (data) {
         state.catalog = data;
+        state.metricsUrl = data.metricsUrl || null;
         fillCategoryFilter(data.categories || []);
-        return data;
+        return refreshStats().then(function () { return data; });
       });
   }
 
@@ -149,12 +176,12 @@ function actionButtons(g, sizeClass) {
   if (!a.url) return detail;
   var pi = a.platformExtra;
   if (pi) {
-    return '<a class="btn btn-primary ' + cls + '" href="' + esc(a.url) + '" target="_blank" rel="noopener nofollow">' + pi.icon + " " + pi.cta + "</a>" + detail;
+    return '<a class="btn btn-primary ' + cls + '" href="' + esc(a.url) + '" target="_blank" rel="noopener nofollow" data-metric="download:' + g.id + '">' + pi.icon + " " + pi.cta + "</a>" + detail;
   }
   if (a.isExternal) {
-    return '<a class="btn btn-primary ' + cls + '" href="' + esc(a.url) + '" target="_blank" rel="noopener nofollow">🌐 Sayfaya Git</a>' + detail;
+    return '<a class="btn btn-primary ' + cls + '" href="' + esc(a.url) + '" target="_blank" rel="noopener nofollow" data-metric="download:' + g.id + '">🌐 Sayfaya Git</a>' + detail;
   }
-  return '<a class="btn btn-primary ' + cls + '" href="' + esc(a.url) + '" download>⬇ İndir</a>' + detail;
+  return '<a class="btn btn-primary ' + cls + '" href="' + esc(a.url) + '" download data-metric="download:' + g.id + '">⬇ İndir</a>' + detail;
 }
 
   /* ---------- Rendering ---------- */
@@ -219,7 +246,7 @@ function actionButtons(g, sizeClass) {
           statsHtml(g) +
           '<div class="gcard-actions">' +
             (a.url
-              ? '<a class="btn btn-primary btn-sm" href="' + esc(a.url) + '" target="_blank" rel="noopener nofollow">' + urlIcon + " " + urlLabel + "</a>"
+              ? '<a class="btn btn-primary btn-sm" href="' + esc(a.url) + '" target="_blank" rel="noopener nofollow" data-metric="download:' + g.id + '">' + urlIcon + " " + urlLabel + "</a>"
               : '<span class="btn btn-ghost btn-sm" style="cursor:default">Yakında</span>') +
             '<a class="btn btn-ghost btn-sm" href="#/oyun/' + g.id + '">İncele</a>' +
           "</div>" +
@@ -260,6 +287,7 @@ function actionButtons(g, sizeClass) {
 
   function renderGame(id) {
     var el = $("#gameDetail");
+    metric("view", id);
     var g = state.catalog && state.catalog.games.find(function (x) { return Number(x.id) === Number(id); });
     if (!g) {
       el.innerHTML = '<div class="empty">Oyun bulunamadı. <a href="#/katalog" style="color:var(--accent)">Kataloğa dön</a></div>';
@@ -302,13 +330,13 @@ function actionButtons(g, sizeClass) {
       var pNote = pi.badge === "TORRENT"
         ? "Magnet linki torrent istemcinle aç; hız topluluğa bağlıdır."
         : "APK'yı indir, Android cihazında kur ve oyna.";
-      actionHtml = '<a class="btn btn-primary btn-lg btn-block" href="' + esc(a.url) + '" target="_blank" rel="noopener nofollow">' + pi.icon + " " + pi.cta + "</a>" +
+      actionHtml = '<a class="btn btn-primary btn-lg btn-block" href="' + esc(a.url) + '" target="_blank" rel="noopener nofollow" data-metric="download:' + g.id + '">' + pi.icon + " " + pi.cta + "</a>" +
         '<span class="dim" style="font-size:.82rem;text-align:center">' + pNote + "</span>";
     } else if (a.isExternal) {
-      actionHtml = '<a class="btn btn-primary btn-lg btn-block" href="' + esc(a.url) + '" target="_blank" rel="noopener nofollow">🌐 Sayfaya Git</a>' +
+      actionHtml = '<a class="btn btn-primary btn-lg btn-block" href="' + esc(a.url) + '" target="_blank" rel="noopener nofollow" data-metric="download:' + g.id + '">🌐 Sayfaya Git</a>' +
         '<span class="dim" style="font-size:.82rem;text-align:center">Oyun tarayıcıda açılır; dosyayı oradan indirebilirsin.</span>';
     } else {
-      actionHtml = '<a class="btn btn-primary btn-lg btn-block" href="' + esc(a.url) + '" download>⬇ İndir</a>' +
+      actionHtml = '<a class="btn btn-primary btn-lg btn-block" href="' + esc(a.url) + '" download data-metric="download:' + g.id + '">⬇ İndir</a>' +
         '<span class="dim" style="font-size:.82rem;text-align:center">Dosyayı indir; uygulamada "Oyun Ekle" bölümünden kur.</span>';
     }
     var screens = Array.isArray(g.screenshots) && g.screenshots.length
@@ -491,6 +519,14 @@ function actionButtons(g, sizeClass) {
     if (feedbackBtn) feedbackBtn.addEventListener("click", openFeedback);
   });
   if (document.readyState !== "loading") { initTheme(); }
+
+  /* Metric delegation: <a data-metric="view|download:id"> */
+  document.addEventListener("click", function (e) {
+    var el = e.target && e.target.closest ? e.target.closest("a[data-metric]") : null;
+    if (!el) return;
+    var parts = el.getAttribute("data-metric").split(":");
+    if (parts[0] === "download") metric("download", parts[1]);
+  });
 
   /* Simple lightbox for screenshots */
   document.addEventListener("click", function (e) {

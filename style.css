@@ -10,6 +10,7 @@
   --accent: #a78bfa;
   --radius: 12px;
   --shadow: 0 10px 30px rgba(0, 0, 0, .35);
+  color-scheme: dark;
 }
 
 [data-theme="light"] {
@@ -21,6 +22,7 @@
   --text-dim: #5c6372;
   --accent: #7c5cf0;
   --shadow: 0 10px 30px rgba(40, 45, 70, .12);
+  color-scheme: light;
 }
 
 [data-theme="light"] body {
