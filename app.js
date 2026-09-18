@@ -434,17 +434,17 @@ function actionButtons(g, sizeClass) {
 
   /* ---------- Theme ---------- */
   function initTheme() {
-    var saved = localStorage.getItem("gl.theme");
-    var theme = saved || (window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark");
+    var saved = localStorage.getItem("html.theme");
+    var theme = saved || (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
     applyTheme(theme);
     var btn = $("#themeToggle");
-    if (btn) btn.textContent = theme === "light" ? "☀️" : "🌙";
+    if (btn) btn.textContent = theme === "dark" ? "☀️" : "🌙";
   }
   function applyTheme(t) {
     document.documentElement.setAttribute("data-theme", t);
-    localStorage.setItem("gl.theme", t);
+    localStorage.setItem("html.theme", t);
     var btn = $("#themeToggle");
-    if (btn) btn.textContent = t === "light" ? "☀️" : "🌙";
+    if (btn) btn.textContent = t === "dark" ? "☀️" : "🌙";
   }
   function toggleTheme() {
     var cur = document.documentElement.getAttribute("data-theme") || "dark";
