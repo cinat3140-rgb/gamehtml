@@ -164,14 +164,58 @@
 
     <section data-view="kurulum" hidden>
       <div class="wrap section">
-        <h1 class="page-title">Kurulum Adımları</h1>
-        <p class="page-sub">Uygulama birkaç dakika içinde çalışmaya hazır.</p>
-        <ol class="steps">
-          <li><b>1. İndir</b><p>Paketi yukarıdan indir; arşivi bir klasöre aç ya da kurulum EXE'sini çalıştır.</p></li>
-          <li><b>2. Kur</b><p>Kurulum sihirbazını takip et. Uygulama masaüstüne ve başlat menüsüne eklenir.</p></li>
-          <li><b>3. Sunucuya bağlan</b><p>İlk açılışta Ayarlar'dan oyun sunucusunun adresini gir (örn. http://192.168.1.20:3001).</p></li>
-          <li><b>4. Oyna</b><p>Kataloğa göz at, oyunları indir ve tek tıkla başlat.</p></li>
-        </ol>
+        <h1 class="page-title">Kurulum</h1>
+        <p class="page-sub">Uygulama kısa sürede çalışmaya hazır. Tek akış; seçim gerekmez.</p>
+        <div id="setupWizard">
+          <div class="setup-bar"><div id="setupBarFill" class="setup-bar-fill"></div></div>
+          <div class="sw-steps">
+            <div class="sw-step" id="swStep1">
+              <div class="sw-num">1</div>
+              <div class="sw-body">
+                <div class="sw-title">Dosya hazırlanıyor</div>
+                <p class="sw-sub">Kurulum paketi indiriliyor ve doğrulanıyor.</p>
+              </div>
+              <div class="sw-check">⏳</div>
+            </div>
+            <div class="sw-step" id="swStep2">
+              <div class="sw-num">2</div>
+              <div class="sw-body">
+                <div class="sw-title">Kuruluma hazırlık</div>
+                <p class="sw-sub">Gerekli dosyalar kontrol ediliyor; bağımlılıklar hazırlanıyor.</p>
+              </div>
+              <div class="sw-check">⋯</div>
+            </div>
+            <div class="sw-step" id="swStep3">
+              <div class="sw-num">3</div>
+              <div class="sw-body">
+                <div class="sw-title">Uygulama kuruluyor</div>
+                <p class="sw-sub">Eski sürüm silinmez, dosyaların üzerine yazılır; hesaplar, favoriler ve tema tercihlerin aynen korunur.</p>
+              </div>
+              <div class="sw-check">⋯</div>
+            </div>
+            <div class="sw-step" id="swStep4">
+              <div class="sw-num">4</div>
+              <div class="sw-body">
+                <div class="sw-title">Sunucuya bağlanıyor</div>
+                <p class="sw-sub">İlk açılışta ayarlardan oyun sunucusunun adresi girilir (örn. http://192.168.1.20:3001).</p>
+              </div>
+              <div class="sw-check">⋯</div>
+            </div>
+            <div class="sw-step" id="swStep5">
+              <div class="sw-num">✓</div>
+              <div class="sw-body">
+                <div class="sw-title">Kurulum tamamlandı</div>
+                <p class="sw-sub">Oynamaya hazırsın. Katalogdan tek tık seç ve başlat.</p>
+              </div>
+              <div class="sw-check">🎉</div>
+            </div>
+          </div>
+          <div class="sw-actions">
+            <button class="btn btn-primary btn-lg" id="setupNext" type="button">Sıradaki →</button>
+            <a class="btn btn-ghost" id="setupStart" href="#/indir">Paketi İndir</a>
+          </div>
+          <p class="sw-status dim" id="setupStatus"></p>
+        </div>
       </div>
     </section>
 

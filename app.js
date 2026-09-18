@@ -359,6 +359,7 @@ function actionButtons(g, sizeClass) {
       extraInfo;
 
     el.innerHTML =
+      '<div class="detail-social" id="detailSocial" data-gid="' + (g.id) + '"></div>' +
       '<div class="detail-head">' +
           (g.bannerUrl && !g.coverUrl ? '<div class="detail-hero-bg"><img src="' + esc(g.bannerUrl) + '" alt="" /></div>' : "") +
           '<div class="detail-cover-wrap">' + coverWithFallback(g) + (g.isFeatured ? '<span class="gcard-featured">★ Öne Çıkan</span>' : "") + "</div>" +
@@ -380,8 +381,10 @@ function actionButtons(g, sizeClass) {
           '<div class="detail-panel-title">Oyun Bilgileri</div>' +
           '<div class="info-list">' + infoRows + "</div>" +
           renderRequirements(g.requirements) +
-        "</aside>" +
-      "</div>";
+          "</aside>" +
+        "</div>";
+    el.querySelectorAll("[data-screenshot]").forEach(function (btn) { bindLightbox(btn); });
+    setTimeout(function () { initComments(g.id); }, 0);
   }
 
   function infoRow(k, v) {
@@ -518,6 +521,7 @@ function actionButtons(g, sizeClass) {
     var feedbackBtn = $("#feedbackBtn");
     if (feedbackBtn) feedbackBtn.addEventListener("click", openFeedback);
   });
+
   if (document.readyState !== "loading") { initTheme(); }
 
   /* Metric delegation: <a data-metric="view|download:id"> */
@@ -545,3 +549,110 @@ function actionButtons(g, sizeClass) {
     }
   });
 })();
+  /* ============ KURULUM SIHRBAZI (tek akis, secimsiz) ============ */
+  function bindSetupWizard() {
+    var next = document.getElementById("setupNext");
+    if (!next) return;
+    var stepEls = Array.prototype.slice.call(document.querySelectorAll(".sw-step"));
+    var status = document.getElementById("setupStatus");
+    var bar = document.getElementById("setupBarFill");
+    var cur = 0;
+    cur = -1;
+    function label(i){ return stepEls[i] ? stepEls[i].querySelector(".sw-title").textContent : ""; }
+    function setStatus(t){ if (status) status.textContent = t; }
+    function showStep() {
+      stepEls.forEach(function (st, i) {
+        st.classList.remove("sw-done","sw-active");
+        if (i === cur) st.classList.add("sw-active");
+        if (i < cur) st.classList.add("sw-done");
+        var ch = st.querySelector(".sw-check");
+        if (ch) ch.textContent = i < cur ? "✓" : (i === cur ? "⋯" : "·");
+      });
+      if (bar) bar.style.width = Math.round(((cur + 1) / stepEls.length) * 100) + "%";
+    }
+    next.addEventListener("click", function () {
+      cur++;
+      if (cur >= stepEls.length) {
+        setStatus("Kurulum tamamlandi. Katalogdan oyunu secte ve baslat.");
+        next.textContent = "Katalogu Ac  →";
+        next.className = next.className.replace(/\bsw-finished\b/,"").trim() + " sw-finished";
+        next.onclick = function () { location.hash = "#/katalog"; };
+        showStep();
+        return;
+      }
+      setStatus("Adiim " + (cur + 1) + ": " + label(cur));
+      showStep();
+      if (cur === stepEls.length - 1) {
+        next.textContent = "Kurulumu Tamamla  →";
+      } else {
+        next.textContent = "Siradaki  →";
+      }
+    });
+    showStep();
+  }
+
+  /* ============ YORUM & CANLI SOHBET (dual-mode: localStorage / Supabase) ============ */
+  var COMMENTS_KEY = "html.comments.dual";
+  var COMMENTS_BUCKET = "html.comments.payloads";
+  var COMMENTS_DB = "localstorage";
+  var COMMENTS_CONFIG = { supabaseUrl: "", supabaseAnonKey: "", table: "yorumlar" };
+  function initComments(gameId) {
+    var host = document.getElementById("detailSocial");
+    if (!host) return;
+    var key = gameId ? "html.comments." + String(gameId) : "html.comments.global";
+    var listKey = key + ".list";
+    var items = [];
+    try { items = JSON.parse(localStorage.getItem(listKey) || "[]"); } catch (e) { items = []; }
+    function save() { try { localStorage.setItem(listKey, JSON.stringify(items)); } catch (e) {} }
+    var nameKey = "html.user.name";
+    var myName = localStorage.getItem(nameKey) || "Misafir";
+    var html =
+      '<div class="support-head"><h3>Yorumlar ve Canli Sohbet</h3>' +
+      (COMMENTS_CONFIG.supabaseUrl ? '<span class="social-badge">CANLI</span>' : '<span class="chat-local-badge">cihaz-modu</span>') +
+      "</div>" +
+      '<p class="support-sub">Oyunu deneyenlerle yorumlasi. Supabase anahtari girilirse bu alan tum ziyaretcilejin ortak canli sohbetina donusur (kod hazir).</p>' +
+      '<div class="support-form">' +
+        '<div class="support-row">' +
+          '<input type="text" id="cmtName" placeholder="Takma ad (bos = Misafir)" maxlength="24" value="' + esc(myName) + '" />' +
+          '<input type="email" id="cmtEmail" placeholder="Email (istege bagli / avatar)" maxlength="80" />' +
+        "</div>" +
+        '<textarea id="cmtMsg" maxlength="500" placeholder="Yorumunu veya soruya yaz, mesajini gonder..."></textarea>' +
+        '<button class="btn btn-primary" id="cmtSend" type="button">Yorum Gonder</button>' +
+      "</div>" +
+      '<div class="support-log" id="cmtLog">' + renderComments(items) + "</div>" +
+      '<p class="sw-status dim" id="cmtInfo">' + (items.length ? items.length + " yorum" : "Ilk yorumu sen yaz") + "</p>";
+    host.innerHTML = html;
+    var send = document.getElementById("cmtSend");
+    var msg = document.getElementById("cmtMsg");
+    var nm = document.getElementById("cmtName");
+    var em = document.getElementById("cmtEmail");
+    function post() {
+      if (msg && !msg.value.trim()) return;
+      if (nm && nm.value.trim()) { localStorage.setItem(nameKey, nm.value.trim()); }
+      var item = { id: "c" + Date.now(), author: myName, email: em && em.value.trim() ? em.value.trim() : "", text: msg.value.trim(), at: Date.now() };
+      if (COMMENTS_CONFIG.supabaseUrl && window.supabase) {
+        /* Supabase-mode: burada SUpabase insert calisir (anahtar girilince etkin) */
+        try { window.supabase.from(COMMENTS_CONFIG.table).insert([{ oyun: String(gameId), yazar: item.author, metin: item.text, email: item.email }]).then(function () {}); } catch (e) {}
+      }
+      items.push(item);
+      if (items.length > 60) items = items.slice(-60);
+      save();
+      var log = document.getElementById("cmtLog");
+      if (log) log.innerHTML = renderComments(items);
+      var info = document.getElementById("cmtInfo");
+      if (info) info.textContent = items.length + " yorum";
+      msg.value = "";
+    }
+    if (send) send.addEventListener("click", post);
+    if (msg) msg.addEventListener("keydown", function (e) { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); post(); } });
+  }
+  function renderComments(items) {
+    if (!items || !items.length) return "";
+    return items.map(function (it) {
+      var when = new Date(it.at).toLocaleDateString("tr-TR", { day: "numeric", month: "short" });
+      return '<div class="chat-item">' +
+        '<div class="chat-meta"><span class="chat-author">' + esc(it.author || "Misafir") + "</span>" +
+        '<span class="chat-time">' + when + "</span></div>" +
+        "<div>" + esc(it.text) + "</div></div>";
+    }).join("");
+  }
