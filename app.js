@@ -359,7 +359,6 @@ function actionButtons(g, sizeClass) {
       extraInfo;
 
     el.innerHTML =
-      '<div class="detail-social" id="detailSocial" data-gid="' + (g.id) + '"></div>' +
       '<div class="detail-head">' +
           (g.bannerUrl && !g.coverUrl ? '<div class="detail-hero-bg"><img src="' + esc(g.bannerUrl) + '" alt="" /></div>' : "") +
           '<div class="detail-cover-wrap">' + coverWithFallback(g) + (g.isFeatured ? '<span class="gcard-featured">★ Öne Çıkan</span>' : "") + "</div>" +
@@ -382,7 +381,8 @@ function actionButtons(g, sizeClass) {
           '<div class="info-list">' + infoRows + "</div>" +
           renderRequirements(g.requirements) +
           "</aside>" +
-        "</div>";
+        "</div>" +
+      '<div class="detail-social" id="detailSocial" data-gid="' + (g.id) + '"></div>';
     el.querySelectorAll("[data-screenshot]").forEach(function (btn) { bindLightbox(btn); });
     setTimeout(function () { initComments(g.id); }, 0);
   }
