@@ -656,18 +656,15 @@ var COMMENTS_CONFIG = {
         });
     }
     var html =
-      '<div class="support-head"><h3>Yorumlar ve Canlı Sohbet</h3>' +
-      '<span class="social-badge">CANLI</span>' +
-      "</div>" +
-      '<p class="support-sub">Herkese açık ortak sohbet. Takma adınla yaz, mesajın tüm ziyaretçilere anında görünür.</p>' +
+      '<div class="support-head"><h3>Yorumlar</h3></div>' +
       '<div class="support-log" id="cmtLog"></div>' +
       '<div class="support-form">' +
         '<div class="support-row">' +
           '<input type="text" id="cmtName" placeholder="Takma ad (boş = Misafir)" maxlength="24" value="' + esc(myName) + '" />' +
           '<input type="email" id="cmtEmail" placeholder="Email (isteğe bağlı)" maxlength="80" />' +
         "</div>" +
-        '<textarea id="cmtMsg" maxlength="500" placeholder="Yorumunu yaz, mesajını gönder..."></textarea>' +
-        '<button class="btn btn-primary" id="cmtSend" type="button">Yorum Gönder</button>' +
+        '<textarea id="cmtMsg" maxlength="500" placeholder="Bu oyun hakkında yorumunu yaz..."></textarea>' +
+        '<button class="btn btn-primary" id="cmtSend" type="button">Yorum Yap</button>' +
       "</div>" +
       '<p class="sw-status dim" id="cmtInfo"></p>';
     host.innerHTML = html;
@@ -677,7 +674,7 @@ var COMMENTS_CONFIG = {
     if (msg) msg.addEventListener("keydown", function (e) { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); post(); } });
     refresh();
     if (pollTimer) clearInterval(pollTimer);
-    pollTimer = setInterval(refresh, 4000);
+    pollTimer = setInterval(refresh, 20000);
   }
   function renderComments(items) {
     if (!items || !items.length) return "";
