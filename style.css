@@ -1,4 +1,4 @@
-﻿:root {
+:root {
   --bg: #171a21;
   --bg-soft: #1d212c;
   --bg-raised: #242a37;
@@ -197,6 +197,8 @@ h1, h2, h3, p { margin: 0; }
 .stat-downloads::before { content: "⬇ "; }
 .stat-popular { color: var(--accent) !important; font-weight: 700; }
 .stat-popular::before { content: "🔥 "; }
+.gcard-views, .gcard-dl { color: var(--text-dim); font-size: .78rem; }
+.gcard-meta-sep { color: var(--border); opacity: .8; }
 
 /* ---------- Sort row tweak ---------- */
 .sort-note { color: var(--text-dim); font-size: .82rem; margin-top: 8px; }
@@ -357,13 +359,27 @@ h1, h2, h3, p { margin: 0; }
 /* ==== Kurulum Sihirbazı (v1.5) ==== */
 .setup-bar { height:6px; background:rgba(127,127,127,.25); border-radius:99px; overflow:hidden; margin:0 0 18px; }
 .setup-bar-fill { height:100%; width:0%; background:linear-gradient(90deg,var(--accent,#4f8cff),var(--accent-2,#7b5cff)); border-radius:99px; transition:width .5s ease; }
+.sw-steps { display:flex; flex-direction:column; gap:12px; }
+.sw-step { display:flex; gap:12px; align-items:flex-start; background:rgba(127,127,127,.07); border:1px solid rgba(127,127,127,.18); border-radius:12px; padding:12px; opacity:.55; transition:opacity .3s ease, border-color .3s ease, transform .3s ease; }
+.sw-step.sw-active { opacity:1; border-color:rgba(79,140,255,.55); box-shadow:0 0 0 1px rgba(79,140,255,.2); }
+.sw-step.sw-done { opacity:1; }
+.sw-num { width:30px; height:30px; border-radius:99px; background:rgba(79,140,255,.18); color:var(--accent,#4f8cff); display:flex; align-items:center; justify-content:center; font-weight:700; flex-shrink:0; }
+.sw-body { flex:1; }
+.sw-title { font-weight:600; margin-bottom:2px; }
+.sw-sub { font-size:.88em; opacity:.85; margin:0; }
+.sw-check { min-width:22px; text-align:center; color:var(--ok,#4caf50); font-weight:700; }
+.sw-actions { display:flex; flex-wrap:wrap; gap:10px; margin-top:18px; }
+.sw-status { margin-top:10px; }
 
 /* ==== Yorum Sistemi (tema uyumlu v2) ==== */
+.support { margin-top:18px; border-top:1px solid rgba(127,127,127,.25); padding-top:14px; }
 .detail-social { margin-top:28px; padding-top:20px; border-top:1px solid var(--border); }
 .support-head { display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:12px; }
 .support-head h3 { margin:0; font-size:1.1em; letter-spacing:.2px; }
 .support-head .support-count { font-size:.75em; color:var(--text-dim); font-weight:600; background:var(--bg-raised); padding:3px 10px; border-radius:99px; }
 .support-sub { margin:0 0 14px; color:var(--text-dim); font-size:.85em; }
+.social-badge { font-size:.72em; background:rgba(76,175,80,.15); color:var(--ok,#4caf50); padding:3px 8px; border-radius:99px; }
+.chat-local-badge { font-size:.72em; background:rgba(255,193,7,.15); color:var(--warn,#ffc107); padding:3px 8px; border-radius:99px; }
 .support-log { display:flex; flex-direction:column; gap:10px; max-height:320px; overflow-y:auto; padding:14px; background:var(--bg-soft); border:1px solid var(--border); border-radius:12px; }
 .support-log::-webkit-scrollbar { width:8px; }
 .support-log::-webkit-scrollbar-thumb { background:var(--bg-raised); border-radius:8px; }
