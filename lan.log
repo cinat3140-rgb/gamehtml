@@ -1,0 +1,16 @@
+[20:29:53] [31mERROR[39m: [36mlisten EADDRINUSE: address already in use 0.0.0.0:3001[39m
+    err: {
+      "type": "Error",
+      "message": "listen EADDRINUSE: address already in use 0.0.0.0:3001",
+      "stack":
+          Error: listen EADDRINUSE: address already in use 0.0.0.0:3001
+              at Server.setupListenHandle [as _listen2] (node:net:20[20:30:10] [32mINFO[39m: [36mincoming request[39m
+    [35mreqId[39m: "req-1"
+    [35mreq[39m: {
+      "method": "GET",
+      "url": "/catalog.json",
+      "host": "192.168.1.121:3001",
+      "remoteAddress": "192.168.1.121",
+      "remotePort": 53477
+    }
+[20:30:10] [32mINFO[39m: [36mrequest completed
