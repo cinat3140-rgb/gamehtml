@@ -13,4 +13,489 @@
       "remoteAddress": "192.168.1.121",
       "remotePort": 53477
     }
-[20:30:10] [32mINFO[39m: [36mrequest completed
+[20:30:10] [32mINFO[39m: [36mrequest completed[39m
+    [35mreqId[39m: "req-1"
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 16.87579999997979
+[20:30:10] [32mINFO[39m: [36mincoming request[39m
+    [35mreqId[39m: "req-2"
+    [35mreq[39m: {
+      "method": "GET",
+      "url": "/pc/catalog.json",
+      "host": "192.168.1.121:3001",
+      "remoteAddress": "192.168.1.121",
+      "remotePort": 53477
+    }
+[20:30:10] [32mINFO[39m: [36mrequest completed[39m
+    [35mreqId[39m: "req-2"
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 6.837499999994179
+[20:30:10] [32mINFO[39m: [36mincoming request[39m
+    [35mreqId[39m: "req-3"
+    [35mreq[39m: {
+      "method": "GET",
+      "url": "/torrent/catalog.json",
+      "host": "192.168.1.121:3001",
+      "remoteAddress": "192.168.1.121",
+      "remotePort": 53477
+    }
+[20:30:10] [32mINFO[39m: [36mrequest completed[39m
+    [35mreqId[39m: "req-3"
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 4.764499999990221
+[20:30:10] [32mINFO[39m: [36mincoming request[39m
+    [35mreqId[39m: "req-4"
+    [35mreq[39m: {
+      "method": "GET",
+      "url": "/apk/catalog.json",
+      "host": "192.168.1.121:3001",
+      "remoteAddress": "192.168.1.121",
+      "remotePort": 53477
+    }
+[20:30:10] [32mINFO[39m: [36mrequest completed[39m
+    [35mreqId[39m: "req-4"
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 2.9404000000213273
+[20:30:10] [32mINFO[39m: [36mincoming request[39m
+    [35mreqId[39m: "req-5"
+    [35mreq[39m: {
+      "method": "GET",
+      "url": "/pc/",
+      "host": "192.168.1.121:3001",
+      "remoteAddress": "192.168.1.121",
+      "remotePort": 53477
+    }
+[20:30:10] [32mINFO[39m: [36mrequest completed[39m
+    [35mreqId[39m: "req-5"
+    [35mres[39m: {
+      "statusCode": 404
+    }
+    [35mresponseTime[39m: 2.1867999999958556
+[20:30:10] [32mINFO[39m: [36mincoming request[39m
+    [35mreqId[39m: "req-6"
+    [35mreq[39m: {
+      "method": "GET",
+      "url": "/apk/",
+      "host": "192.168.1.121:3001",
+      "remoteAddress": "192.168.1.121",
+      "remotePort": 53477
+    }
+[20:30:10] [32mINFO[39m: [36mrequest completed[39m
+    [35mreqId[39m: "req-6"
+    [35mres[39m: {
+      "statusCode": 404
+    }
+    [35mresponseTime[39m: 1.3612999999895692
+[20:30:10] [32mINFO[39m: [36mincoming request[39m
+    [35mreqId[39m: "req-7"
+    [35mreq[39m: {
+      "method": "GET",
+      "url": "/health",
+      "host": "192.168.1.121:3001",
+      "remoteAddress": "192.168.1.121",
+      "remotePort": 53477
+    }
+[20:30:10] [32mINFO[39m: [36mrequest completed[39m
+    [35mreqId[39m: "req-7"
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 1.5252000000036787
+[20:30:35] [32mINFO[39m: [36mincoming request[39m
+    [35mreqId[39m: "req-8"
+    [35mreq[39m: {
+      "method": "GET",
+      "url": "/pc",
+      "host": "192.168.1.121:3001",
+      "remoteAddress": "192.168.1.121",
+      "remotePort": 62315
+    }
+[20:30:35] [32mINFO[39m: [36mrequest completed[39m
+    [35mreqId[39m: "req-8"
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 3.2717999999877065
+[20:30:35] [32mINFO[39m: [36mincoming request[39m
+    [35mreqId[39m: "req-9"
+    [35mreq[39m: {
+      "method": "GET",
+      "url": "/torrent",
+      "host": "192.168.1.121:3001",
+      "remoteAddress": "192.168.1.121",
+      "remotePort": 62315
+    }
+[20:30:35] [32mINFO[39m: [36mrequest completed[39m
+    [35mreqId[39m: "req-9"
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 3.6388999999908265
+[20:30:35] [32mINFO[39m: [36mincoming request[39m
+    [35mreqId[39m: "req-a"
+    [35mreq[39m: {
+      "method": "GET",
+      "url": "/apk",
+      "host": "192.168.1.121:3001",
+      "remoteAddress": "192.168.1.121",
+      "remotePort": 62315
+    }
+[20:30:35] [32mINFO[39m: [36mrequest completed[39m
+    [35mreqId[39m: "req-a"
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 3.2057999999960884
+[20:30:35] [32mINFO[39m: [36mincoming request[39m
+    [35mreqId[39m: "req-b"
+    [35mreq[39m: {
+      "method": "GET",
+      "url": "/pc/index.html",
+      "host": "192.168.1.121:3001",
+      "remoteAddress": "192.168.1.121",
+      "remotePort": 62315
+    }
+[20:30:35] [32mINFO[39m: [36mrequest completed[39m
+    [35mreqId[39m: "req-b"
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 3.0032999999821186
+[20:30:35] [32mINFO[39m: [36mincoming request[39m
+    [35mreqId[39m: "req-c"
+    [35mreq[39m: {
+      "method": "GET",
+      "url": "/apk/index.html",
+      "host": "192.168.1.121:3001",
+      "remoteAddress": "192.168.1.121",
+      "remotePort": 62315
+    }
+[20:30:35] [32mINFO[39m: [36mrequest completed[39m
+    [35mreqId[39m: "req-c"
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 2.7145000000018626
+[20:30:35] [32mINFO[39m: [36mincoming request[39m
+    [35mreqId[39m: "req-d"
+    [35mreq[39m: {
+      "method": "GET",
+      "url": "/",
+      "host": "192.168.1.121:3001",
+      "remoteAddress": "192.168.1.121",
+      "remotePort": 62315
+    }
+[20:30:35] [32mINFO[39m: [36mrequest completed[39m
+    [35mreqId[39m: "req-d"
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 2.0135999999765772
+[22:29:32] [32mINFO[39m: [36mincoming request[39m
+    [35mreqId[39m: "req-e"
+    [35mreq[39m: {
+      "method": "GET",
+      "url": "/",
+      "host": "192.168.1.121:3001",
+      "remoteAddress": "192.168.1.121",
+      "remotePort": 54527
+    }
+[22:29:32] [32mINFO[39m: [36mrequest completed[39m
+    [35mreqId[39m: "req-e"
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 14.899100000038743
+[22:29:32] [32mINFO[39m: [36mincoming request[39m
+    [35mreqId[39m: "req-f"
+    [35mreq[39m: {
+      "method": "GET",
+      "url": "/style.css?v=20260923",
+      "host": "192.168.1.121:3001",
+      "remoteAddress": "192.168.1.121",
+      "remotePort": 54527
+    }
+[22:29:32] [32mINFO[39m: [36mincoming request[39m
+    [35mreqId[39m: "req-g"
+    [35mreq[39m: {
+      "method": "GET",
+      "url": "/app.js?v=20260923",
+      "host": "192.168.1.121:3001",
+      "remoteAddress": "192.168.1.121",
+      "remotePort": 53982
+    }
+[22:29:32] [32mINFO[39m: [36mrequest completed[39m
+    [35mreqId[39m: "req-f"
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 6.612100000493228
+[22:29:32] [32mINFO[39m: [36mrequest completed[39m
+    [35mreqId[39m: "req-g"
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 130.01460000034422
+[22:29:33] [32mINFO[39m: [36mincoming request[39m
+    [35mreqId[39m: "req-h"
+    [35mreq[39m: {
+      "method": "GET",
+      "url": "/news.json",
+      "host": "192.168.1.121:3001",
+      "remoteAddress": "192.168.1.121",
+      "remotePort": 53982
+    }
+[22:29:33] [32mINFO[39m: [36mincoming request[39m
+    [35mreqId[39m: "req-i"
+    [35mreq[39m: {
+      "method": "GET",
+      "url": "/catalog.json?v=1790018973009",
+      "host": "192.168.1.121:3001",
+      "remoteAddress": "192.168.1.121",
+      "remotePort": 54527
+    }
+[22:29:33] [32mINFO[39m: [36mincoming request[39m
+    [35mreqId[39m: "req-j"
+    [35mreq[39m: {
+      "method": "GET",
+      "url": "/app-update.json",
+      "host": "192.168.1.121:3001",
+      "remoteAddress": "192.168.1.121",
+      "remotePort": 55657
+    }
+[22:29:33] [32mINFO[39m: [36mrequest completed[39m
+    [35mreqId[39m: "req-h"
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 23.96100000012666
+[22:29:33] [32mINFO[39m: [36mrequest completed[39m
+    [35mreqId[39m: "req-i"
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 12.514999999664724
+[22:29:33] [32mINFO[39m: [36mrequest completed[39m
+    [35mreqId[39m: "req-j"
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 8.198199999518692
+[22:29:33] [32mINFO[39m: [36mincoming request[39m
+    [35mreqId[39m: "req-k"
+    [35mreq[39m: {
+      "method": "GET",
+      "url": "/games/6/cover.png",
+      "host": "192.168.1.121:3001",
+      "remoteAddress": "192.168.1.121",
+      "remotePort": 55657
+    }
+[22:29:33] [32mINFO[39m: [36mincoming request[39m
+    [35mreqId[39m: "req-l"
+    [35mreq[39m: {
+      "method": "GET",
+      "url": "/favicon.png",
+      "host": "192.168.1.121:3001",
+      "remoteAddress": "192.168.1.121",
+      "remotePort": 54527
+    }
+[22:29:33] [32mINFO[39m: [36mrequest completed[39m
+    [35mreqId[39m: "req-l"
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 5.25139999948442
+[22:29:33] [32mINFO[39m: [36mrequest completed[39m
+    [35mreqId[39m: "req-k"
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 14.623699999414384
+[22:29:33] [32mINFO[39m: [36mincoming request[39m
+    [35mreqId[39m: "req-m"
+    [35mreq[39m: {
+      "method": "GET",
+      "url": "/logo.svg",
+      "host": "192.168.1.121:3001",
+      "remoteAddress": "192.168.1.121",
+      "remotePort": 55657
+    }
+[22:29:33] [32mINFO[39m: [36mrequest completed[39m
+    [35mreqId[39m: "req-m"
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 2.426099999807775
+[22:29:47] [32mINFO[39m: [36mincoming request[39m
+    [35mreqId[39m: "req-n"
+    [35mreq[39m: {
+      "method": "GET",
+      "url": "/pc/",
+      "host": "192.168.1.121:3001",
+      "remoteAddress": "192.168.1.121",
+      "remotePort": 55657
+    }
+[22:29:47] [32mINFO[39m: [36mrequest completed[39m
+    [35mreqId[39m: "req-n"
+    [35mres[39m: {
+      "statusCode": 404
+    }
+    [35mresponseTime[39m: 1.103099999949336
+[22:29:48] [32mINFO[39m: [36mincoming request[39m
+    [35mreqId[39m: "req-o"
+    [35mreq[39m: {
+      "method": "GET",
+      "url": "/favicon.ico",
+      "host": "192.168.1.121:3001",
+      "remoteAddress": "192.168.1.121",
+      "remotePort": 55657
+    }
+[22:29:48] [32mINFO[39m: [36mrequest completed[39m
+    [35mreqId[39m: "req-o"
+    [35mres[39m: {
+      "statusCode": 404
+    }
+    [35mresponseTime[39m: 0.8228000001981854
+[22:29:54] [32mINFO[39m: [36mincoming request[39m
+    [35mreqId[39m: "req-p"
+    [35mreq[39m: {
+      "method": "GET",
+      "url": "/torrent/",
+      "host": "192.168.1.121:3001",
+      "remoteAddress": "192.168.1.121",
+      "remotePort": 55657
+    }
+[22:29:54] [32mINFO[39m: [36mrequest completed[39m
+    [35mreqId[39m: "req-p"
+    [35mres[39m: {
+      "statusCode": 404
+    }
+    [35mresponseTime[39m: 1.0531999999657273
+[22:29:58] [32mINFO[39m: [36mincoming request[39m
+    [35mreqId[39m: "req-q"
+    [35mreq[39m: {
+      "method": "GET",
+      "url": "/news.json",
+      "host": "192.168.1.121:3001",
+      "remoteAddress": "192.168.1.121",
+      "remotePort": 55657
+    }
+[22:29:58] [32mINFO[39m: [36mrequest completed[39m
+    [35mreqId[39m: "req-q"
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 2.9426000006496906
+[22:29:58] [32mINFO[39m: [36mincoming request[39m
+    [35mreqId[39m: "req-r"
+    [35mreq[39m: {
+      "method": "GET",
+      "url": "/catalog.json?v=1790018998764",
+      "host": "192.168.1.121:3001",
+      "remoteAddress": "192.168.1.121",
+      "remotePort": 55657
+    }
+[22:29:58] [32mINFO[39m: [36mrequest completed[39m
+    [35mreqId[39m: "req-r"
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 4.334400000050664
+[22:30:10] [32mINFO[39m: [36mincoming request[39m
+    [35mreqId[39m: "req-s"
+    [35mreq[39m: {
+      "method": "GET",
+      "url": "/downloads/GameHTML_1.4.3_portable.exe",
+      "host": "192.168.1.121:3001",
+      "remoteAddress": "192.168.1.121",
+      "remotePort": 55657
+    }
+[22:30:10] [32mINFO[39m: [36mrequest completed[39m
+    [35mreqId[39m: "req-s"
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 17.880900000222027
+[22:32:53] [32mINFO[39m: [36mincoming request[39m
+    [35mreqId[39m: "req-t"
+    [35mreq[39m: {
+      "method": "GET",
+      "url": "/torrent/",
+      "host": "192.168.1.121:3001",
+      "remoteAddress": "192.168.1.121",
+      "remotePort": 65504
+    }
+[22:32:53] [32mINFO[39m: [36mrequest completed[39m
+    [35mreqId[39m: "req-t"
+    [35mres[39m: {
+      "statusCode": 404
+    }
+    [35mresponseTime[39m: 0.9353999998420477
+[22:32:58] [32mINFO[39m: [36mincoming request[39m
+    [35mreqId[39m: "req-u"
+    [35mreq[39m: {
+      "method": "GET",
+      "url": "/news.json",
+      "host": "192.168.1.121:3001",
+      "remoteAddress": "192.168.1.121",
+      "remotePort": 65504
+    }
+[22:32:58] [32mINFO[39m: [36mrequest completed[39m
+    [35mreqId[39m: "req-u"
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 3.1806000005453825
+[22:32:58] [32mINFO[39m: [36mincoming request[39m
+    [35mreqId[39m: "req-v"
+    [35mreq[39m: {
+      "method": "GET",
+      "url": "/catalog.json?v=1790019178754",
+      "host": "192.168.1.121:3001",
+      "remoteAddress": "192.168.1.121",
+      "remotePort": 65504
+    }
+[22:32:58] [32mINFO[39m: [36mrequest completed[39m
+    [35mreqId[39m: "req-v"
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 2.319799999706447
+[23:23:42] [32mINFO[39m: [36mincoming request[39m
+    [35mreqId[39m: "req-w"
+    [35mreq[39m: {
+      "method": "GET",
+      "url": "/news.json",
+      "host": "192.168.1.121:3001",
+      "remoteAddress": "192.168.1.121",
+      "remotePort": 51674
+    }
+[23:23:42] [32mINFO[39m: [36mrequest completed[39m
+    [35mreqId[39m: "req-w"
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 4.083700001239777
+[23:23:42] [32mINFO[39m: [36mincoming request[39m
+    [35mreqId[39m: "req-x"
+    [35mreq[39m: {
+      "method": "GET",
+      "url": "/catalog.json?v=1790022222139",
+      "host": "192.168.1.121:3001",
+      "remoteAddress": "192.168.1.121",
+      "remotePort": 51674
+    }
+[23:23:42] [32mINFO[39m: [36mrequest completed[39m
+    [35mreqId[39m: "req-x"
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 3.576700000092387
