@@ -9,14 +9,14 @@ const sites = [
 let ok = 0, err = 0;
 for (const s of sites) {
   const h = fs.readFileSync(s.p + "/index.html", "utf8");
-  const brand = h.match(/<span class="brand-name">Game<span class="accent">Vault<\/span><\/span>/);
+  const brand = h.match(/<span class="brand-name">Oyu<span class="accent">no<\/span><\/span>/);
   const title = (h.match(/<title>(.*?)<\/title>/) || [null, "?"])[1];
   const badge = h.match(/<span class="platform-badge">(.*?)<\/span>/);
   const footer = h.match(/<footer>([\s\S]*?)<\/footer>/);
   const fClean = footer
     ? footer[1].replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim().slice(0, 80)
     : "-";
-  const old = /SteamUncapped|PcHTML|TorrentHTML|ApkHTML|Pc HTML|Torrent HTML|Apk HTML/i.test(h);
+  const old = /SteamUncapped|GameVault|GameHTML|PcHTML|TorrentHTML|ApkHTML|Pc HTML|Torrent HTML|Apk HTML/i.test(h);
   const cssV = (h.match(/style\.css\?v=(\d{8})/) || [null, "?"])[1];
   const hasVault = (fs.readFileSync(s.p + "/style.css", "utf8") || "").includes("platform-badge");
   const good = brand && !old && hasVault;
@@ -24,11 +24,11 @@ for (const s of sites) {
   console.log(
     "[" + s.n.padEnd(7) + "] " +
     (good ? "OK " : "HATA ") +
-    (brand ? "brand=GameVault " : "BRAND=YOK! ") +
+    (brand ? "brand=Oynuo " : "BRAND=YOK! ") +
     "badge=" + (badge ? badge[1] : "-") + " " +
     "cssV=" + cssV + " badgeCSS=" + (hasVault ? "var" : "yok") + " " +
     "eskiRef=" + (old ? "VAR!" : "temiz") + "\n" +
     "        title=' " + title + "' | footer='" + fClean + "'"
   );
 }
-console.log(ok === 4 ? "\nTAMAM: 4 site GameVault + badge + temiz" : "\nSORUN: ok=" + ok + " err=" + err);
+console.log(ok === 4 ? "\nTAMAM: 4 site Oynuo + badge + temiz" : "\nSORUN: ok=" + ok + " err=" + err);

@@ -26,7 +26,7 @@ for (const s of d) {
   const css = (h.match(/style\.css\?v=(\d{8})/) || [null, "?"])[1];
   const cssFile = fs.readFileSync(s.p + "/style.css", "utf8");
   const hasBadgeCss = cssFile.includes(".platform-badge");
-  const hasGameVault = bb === "GameVault" || /Game\s*Vault/i.test(bb + " " + ti);
+  const hasGameVault = bb === "Oynuo" || /Oyu\s*no/i.test(bb + " " + ti);
   const hasLaunchCSS = fs.existsSync(s.p + "/style.css");
   const cardMeta = (h.match(/card-meta-top/) || [""])[0];
   const isMain = s.n === "ANA";
@@ -43,4 +43,4 @@ for (const s of d) {
   console.log("   footer: " + fo);
 }
 console.log("");
-console.log(err === 0 ? "HEPSI GAMEVAULT - TAMAM" : "HATA SAYISI: " + err);
+console.log(err === 0 ? "HEPSI OYNUO - TAMAM" : "HATA SAYISI: " + err);

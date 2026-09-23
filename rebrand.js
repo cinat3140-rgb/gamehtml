@@ -7,14 +7,14 @@ const sites = [
   { dir: "C:/Users/PC/apkhtml",         plat: "APK" },
 ];
 
-const BRAND = 'Steam<span class="accent">Uncapped</span>';
+const BRAND = 'Oyu<span class="accent">no</span>';
 
 for (const s of sites) {
   const f = s.dir + "/index.html";
   let h = fs.readFileSync(f, "utf8");
   const name = s.dir.replace(/.*[\\/]/, "");
 
-  // 1) brand-name span icerigini SteamUncapped yap (label'dan bagimsiz, guvenli regex)
+  // 1) brand-name span icerigini Oynuo yap (label'dan bagimsiz, guvenli regex)
   h = h.replace(/(<span class="brand-name">)[\s\S]*?(<\/span>)/, "$1" + BRAND + "$2");
 
   // 2) platform badge'i brand-name span'inin hemen arkasina ekle (1 sefer)
@@ -26,14 +26,17 @@ for (const s of sites) {
   }
 
   // 3) site-switch icindeki gorunen marka isimlerini platform etiketiyle tutarli yap
-  h = h.replace(/class="site-link[^"]*"[^>]*>\s*PcHTML\s*</g, m => m.replace("PcHTML", "SteamUncapped PC"));
-  h = h.replace(/class="site-link[^"]*"[^>]*>\s*TorrentHTML\s*</g, m => m.replace("TorrentHTML", "SteamUncapped Torrent"));
-  h = h.replace(/class="site-link[^"]*"[^>]*>\s*ApkHTML\s*</g, m => m.replace("ApkHTML", "SteamUncapped APK"));
-  h = h.replace(/class="site-link[^"]*"[^>]*>\s*PcHTML\s*</g, m => m.replace("PcHTML", "SteamUncapped PC"));
-  h = h.replace(/class="site-link[^"]*"[^>]*>\s*TorrentHTML\s*</g, m => m.replace("TorrentHTML", "SteamUncapped Torrent"));
+  h = h.replace(/class="site-link[^"]*"[^>]*>\s*PcHTML\s*</g, m => m.replace("PcHTML", "Oynuo PC"));
+  h = h.replace(/class="site-link[^"]*"[^>]*>\s*TorrentHTML\s*</g, m => m.replace("TorrentHTML", "Oynuo Torrent"));
+  h = h.replace(/class="site-link[^"]*"[^>]*>\s*ApkHTML\s*</g, m => m.replace("ApkHTML", "Oynuo APK"));
+  h = h.replace(/class="site-link[^"]*"[^>]*>\s*PcHTML\s*</g, m => m.replace("PcHTML", "Oynuo PC"));
+  h = h.replace(/class="site-link[^"]*"[^>]*>\s*TorrentHTML\s*</g, m => m.replace("TorrentHTML", "Oynuo Torrent"));
+  h = h.replace(/class="site-link[^"]*"[^>]*>\s*GameVault\s*</g, m => m.replace("GameVault", "Oynuo"));
 
-  // 4) footer'daki eski HTML-marka adlarini SteamUncapped yap
-  h = h.replace(/(?:(?:Pc|PC|Torrent|Apk)\s*HTML|PcHTML|TorrentHTML|ApkHTML)/g, "SteamUncapped");
+  // 4) footer'daki eski HTML-marka adlarini Oynuo yap
+  h = h.replace(/(?:(?:Pc|PC|Torrent|Apk)\s*HTML|PcHTML|TorrentHTML|ApkHTML)/g, "Oynuo");
+  h = h.replace(/GameVault/g, "Oynuo");
+  h = h.replace(/SteamUncapped/g, "Oynuo");
 
   fs.writeFileSync(f, h);
   console.log("OK  " + name);
