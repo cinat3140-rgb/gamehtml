@@ -217,5 +217,71 @@
     "sha256": "B883DB38F0D615749C70785AA6C8F272AC6668FF434DBE31A20028EDCD67C3FC",
     "portableSha256": "8603A54A8002474D4D216DEE95193716A63650DA2D0213F8E6DCBAA32555A908",
     "upToDate": false
-  }
+  },
+  "upcomingGames": [
+    {
+      "id": "up-grand-theft-auto-vi",
+      "title": "Grand Theft Auto VI",
+      "platform": "pc",
+      "releaseDate": "2026-11-19",
+      "note": "Rockstar Games — PC sürümü hazırlanıyor",
+      "status": "coming-soon"
+    },
+    {
+      "id": "up-elden-ring-nightreign",
+      "title": "Elden Ring: Nightreign",
+      "platform": "pc",
+      "releaseDate": "2026-10-16",
+      "note": "FromSoftware — co-op action RPG",
+      "status": "coming-soon"
+    },
+    {
+      "id": "up-cyberpunk-2077-phantom-liberty",
+      "title": "Cyberpunk 2077: Phantom Liberty",
+      "platform": "pc",
+      "releaseDate": "2026-09-18",
+      "note": "CD PROJEKT RED — genişleme paketi",
+      "status": "coming-soon"
+    },
+    {
+      "id": "up-gta-san-andreas-definitive-edition",
+      "title": "GTA San Andreas Definitive Edition",
+      "platform": "pc",
+      "releaseDate": "2026-12-11",
+      "note": "Rockstar Games — remaster",
+      "status": "coming-soon"
+    },
+    {
+      "id": "up-the-last-of-us-part-ii-remastered",
+      "title": "The Last of Us Part II Remastered",
+      "platform": "pc",
+      "releaseDate": "2026-10-09",
+      "note": "Naughty Dog — PC sürümü",
+      "status": "coming-soon"
+    },
+    {
+      "id": "up-hollow-knight-silksong",
+      "title": "Hollow Knight: Silksong",
+      "platform": "pc",
+      "releaseDate": "2026-10-24",
+      "note": "Team Cherry — beklenen sürüm",
+      "status": "coming-soon"
+    },
+    {
+      "id": "up-resident-evil-5-remake",
+      "title": "Resident Evil 5 Remake",
+      "platform": "pc",
+      "releaseDate": "2026-11-27",
+      "note": "Capcom — yeniden yapım",
+      "status": "coming-soon"
+    },
+    {
+      "id": "up-wuthering-waves-2-0",
+      "title": "Wuthering Waves 2.0",
+      "platform": "pc",
+      "releaseDate": "2026-10-08",
+      "note": "Kuro Games — ücretsiz güncelleme",
+      "status": "coming-soon"
+    }
+  ]
 }
