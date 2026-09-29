@@ -3,23 +3,15 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Oynuo -  Oyun Kutuphanesi</title>
+  <title>Oynuo - Oyun Kütüphanesi</title>
   <meta name="description" content="Oynuo (Ana): en sevdiğin PC oyunlarını önceden kurulmuş, oynamaya hazır indir. Steam gerekmez, tamamen ücretsiz. Siteden veya Windows uygulamasından oyna." />
   <link rel="icon" href="logo.svg" type="image/svg+xml" />
   <link rel="icon" href="favicon.png" type="image/png" />
   <link rel="apple-touch-icon" href="apple-touch-icon.png" />
-  <link rel="stylesheet" href="style.css?v=20260929" />
+  <link rel="stylesheet" href="style.css?v=20260929e" />
 </head>
 <body>
-  <div class="site-switch">
-    <div class="wrap site-switch-inner">
-      <span class="site-switch-label">Sekmeler:</span>
-      <a class="site-link active" href="#/katalog" data-tab="all">🕹 Oynuo (Ana)</a>
-      <a class="site-link" href="#/katalog" data-tab="pc">🖥 PC</a>
-      <a class="site-link" href="#/katalog" data-tab="torrent">🧲 Torrent</a>
-      <a class="site-link" href="#/katalog" data-tab="apk">🤖 Android / APK</a>
-    </div>
-  </div>
+  
   <header class="nav">
     <div class="wrap nav-inner">
       <a class="brand" href="#/">
@@ -68,12 +60,29 @@
             <a class="btn btn-primary btn-lg" href="#/katalog">🎮 Oyunları Keşfet</a>
             <a class="btn btn-ghost btn-lg" href="#/indir">⬇ Uygulamayı İndir</a>
           </div>
-          <p class="hero-meta">Site üzerinden indir veya <span class="dim">Windows uygulamasını kur</span> · <span id="zipSize" class="dim">1.2 MB</span> · <a href="#/katalog" data-tab-link="torrent" class="dim">Torrent</a> · <a href="#/katalog" data-tab-link="apk" class="dim">APK</a></p>
+          <p class="hero-meta">Site üzerinden indir veya <span class="dim">Windows uygulamasını kur</span> · <span id="zipSize" class="dim">1.2 MB</span> · <a href="#/katalog" class="dim" data-tab-link="torrent">Torrent</a> · <a href="#/katalog" class="dim" data-tab-link="apk">APK</a></p>
         </div>
       </div>
 
+      <section class="section" id="homePlatformSection">
+        <div class="wrap">
+          <div class="section-head">
+            <h2 class="section-title">Sekme Sekme Oyunlar</h2>
+            <a class="btn btn-ghost btn-sm" href="#/katalog">Tümünü Gör →</a>
+          </div>
+          <nav class="platform-tabs" id="homePlatformTabs" role="tablist" aria-label="Platform seçimi">
+            <button type="button" class="ptab active" data-platform="all" role="tab" aria-selected="true">🗂 Tümü</button>
+            <button type="button" class="ptab" data-platform="pc" role="tab" aria-selected="false">🖥️ PC</button>
+            <button type="button" class="ptab" data-platform="torrent" role="tab" aria-selected="false">🌐 Torrent</button>
+            <button type="button" class="ptab" data-platform="apk" role="tab" aria-selected="false">🤖 APK</button>
+          </nav>
+          <div id="homePlatformGrid" class="grid"><div class="loader"></div></div>
+        </div>
+      </section>
+
       <section class="section" id="recentSection">
         <div class="wrap">
+          <div class="promo-host" id="homePromo"></div>
           <div class="section-head">
             <h2 class="section-title">Son Eklenenler</h2>
             <a class="btn btn-ghost btn-sm" href="#/katalog">Tümünü Gör →</a>
@@ -133,12 +142,12 @@
           </div>
           <div class="catalog-controls">
             <input id="searchInput" class="search-input" type="search" placeholder="🔍 Oyun ara…" oninput="window.app && app.applySearch(this.value)" />
-            <select id="platformFilter" class="select" onchange="window.app && app.applyPlatform(this.value)">
-              <option value="all">Tüm Platformlar</option>
-              <option value="pc">🖥️ PC</option>
-              <option value="torrent">🌐 Torrent</option>
-              <option value="apk">🤖 APK</option>
-            </select>
+            <nav class="platform-tabs" id="platformTabs" role="tablist" aria-label="Platform seçimi">
+              <button type="button" class="ptab active" data-platform="all" role="tab" aria-selected="true">🗂 Tümü</button>
+              <button type="button" class="ptab" data-platform="pc" role="tab" aria-selected="false">🖥️ PC</button>
+              <button type="button" class="ptab" data-platform="torrent" role="tab" aria-selected="false">🌐 Torrent</button>
+              <button type="button" class="ptab" data-platform="apk" role="tab" aria-selected="false">🤖 APK</button>
+            </nav>
             <select id="catFilter" class="select" onchange="window.app && app.applyFilter(this.value)">
               <option value="">Tüm Kategoriler</option>
             </select>
@@ -163,10 +172,11 @@
 
     <section data-view="indir" hidden>
       <div class="wrap section">
-        <h1 class="page-title">Uygulamayı İndir</h1>
-        <p class="page-sub">Senin için en uygun paketi seç. Tüm paketler aynı uygulamayı içerir.</p>
+        <h1 class="page-title">Uygulamaları İndir</h1>
+        <p class="page-sub">Platformuna göre en uygun paketi seç. PC için Oynuo masaüstü, Android için Oynuo APK.</p>
+        <h2 class="apps-group-title" style="margin-top:6px;text-transform:none;font-size:1rem">🖥 PC — Oynuo Windows Uygulaması</h2>
         <div class="downloads">
-          <a class="card card-featured" href="downloads/Oynuo-1.4.4-installers.zip">
+          <a class="card card-featured" href="downloads/Oynuo_PC_0.0.3_x64-setup.exe">
             <div class="card-tag">Önerilen</div>
             <div class="card-icon">📦</div>
             <h3>Tüm Kurulumlar (ZIP)</h3>
@@ -174,26 +184,44 @@
             <div class="card-size" id="zipCardSize">4.0 MB</div>
             <span class="btn btn-primary">ZIP İndir</span>
           </a>
-          <a class="card" href="downloads/Oynuo_1.4.4_x64-setup.exe">
+          <a class="card" href="downloads/Oynuo_0.0.3_x64-setup.exe">
             <div class="card-icon">⚙️</div>
             <h3>Kurulum (EXE)</h3>
             <p>NSIS kurulum sihirbazı. En kolay yol.</p>
             <div class="card-size" id="exeSize">1.2 MB</div>
             <span class="btn btn-ghost">EXE İndir</span>
           </a>
-          <a class="card" href="downloads/Oynuo_1.4.4_x64_en-US.msi">
+          <a class="card" href="downloads/Oynuo_PC_0.0.3_x64_en-US.msi">
             <div class="card-icon">🏢</div>
             <h3>MSI Paketi</h3>
             <p>Kurumsal dağıtım için Windows Installer.</p>
             <div class="card-size" id="msiSize">1.7 MB</div>
             <span class="btn btn-ghost">MSI İndir</span>
           </a>
-          <a class="card" href="downloads/Oynuo_1.4.4_portable.exe">
+          <a class="card" href="downloads/Oynuo_PC_0.0.3_portable.exe">
             <div class="card-icon">💾</div>
             <h3>Taşınabilir (EXE)</h3>
             <p>Kurulum gerektirmez; çift tıkla çalıştır.</p>
             <div class="card-size" id="portableSize">3.2 MB</div>
             <span class="btn btn-ghost">EXE İndir</span>
+          </a>
+        </div>
+        <h2 class="apps-group-title" style="margin-top:30px;text-transform:none;font-size:1rem">🤖 Android — Oynuo Mobil Uygulaması (APK)</h2>
+        <div class="downloads">
+          <a class="card card-featured" href="downloads/OynuoAndroid-arm64.apk">
+            <div class="card-tag">Önerilen</div>
+            <div class="card-icon">🤖</div>
+            <h3>Oynuo Android (ARM64)</h3>
+            <p>Güncel Android telefonlar (çoğu cihaz) için APK.</p>
+            <div class="card-size">6.8 MB</div>
+            <span class="btn btn-primary">APK İndir</span>
+          </a>
+          <a class="card" href="downloads/OynuoAndroid-x86_64.apk">
+            <div class="card-icon">📱</div>
+            <h3>Oynuo Android (x86_64)</h3>
+            <p>Emülatörler (BlueStacks vb.) ve x86_64 cihazlar için APK.</p>
+            <div class="card-size">7.7 MB</div>
+            <span class="btn btn-ghost">APK İndir</span>
           </a>
         </div>
       </div>
@@ -297,14 +325,14 @@
         <a href="#/sss">Sık Sorulan Sorular</a>
       </div>
       <div class="footer-col">
-        <h4>Sekmeler</h4>
-        <a href="#/katalog" data-tab-link="all">Oynuo (Ana) — Tümü</a>
-        <a href="#/katalog" data-tab-link="pc">PC Oyunları</a>
-        <a href="#/katalog" data-tab-link="torrent">Torrent Oyunları</a>
-        <a href="#/katalog" data-tab-link="apk">Android / APK Oyunları</a>
+        <h4>Oynuo</h4>
+        <a href="#/katalog">Tüm Oyunlar</a>
+        <a href="#" onclick="window.app && app.applyPlatform('pc'); location.hash='/katalog'; return false;">PC Oyunları</a>
+        <a href="#" onclick="window.app && app.applyPlatform('torrent'); location.hash='/katalog'; return false;">Torrent</a>
+        <a href="#" onclick="window.app && app.applyPlatform('apk'); location.hash='/katalog'; return false;">APK & Uygulamalar</a>
       </div>
       <div class="footer-bottom">
-        <p class="footer-meta"><span id="footerVersion">v1.4.4</span> · © 2026 Oynuo (Ana). Tüm hakları saklıdır.</p>
+        <p class="footer-meta"><span id="footerVersion">v0.0.3</span> · © 2026 Oynuo (Ana). Tüm hakları saklıdır.</p>
       </div>
     </div>
   </footer>
@@ -312,6 +340,30 @@
   <button id="feedbackBtn" class="feedback-fab" title="Geri Bildirim & Hata Bildir">💬</button>
   <button id="toTop" class="to-top" title="Yukarı Dön" aria-label="Yukarı dön">↑</button>
 
-  <script src="app.js?v=20260929"></script>
+  <script src="app.js?v=20260929e"></script>
+  <script>
+    (function () {
+      var tabs = document.querySelectorAll("#platformTabs .ptab");
+      function syncTabs(platform) {
+        tabs.forEach(function (b) {
+          var on = (b.dataset.platform || "all") === (platform || "all");
+          b.classList.toggle("active", on);
+          b.setAttribute("aria-selected", on ? "true" : "false");
+        });
+      }
+      tabs.forEach(function (b) {
+        b.addEventListener("click", function () {
+          var p = b.dataset.platform || "all";
+          if (window.app) app.applyPlatform(p);
+          syncTabs(p);
+        });
+      });
+      document.addEventListener("DOMContentLoaded", function () {
+        var plat = null;
+        try { var h = (location.hash || "").toLowerCase(); var m = h.match(/(?:pc|torrent|apk)/); if (m) plat = m[0]; } catch (e) {}
+        syncTabs(plat || "all");
+      });
+    })();
+  </script>
 </body>
 </html>

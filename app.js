@@ -1,7 +1,7 @@
-(function () {
+﻿(function () {
   "use strict";
 
-  var state = { catalog: null, categoryId: null, platform: "all", error: null, search: "", sort: "default", metricsUrl: null };
+  var state = { catalog: null, categoryId: null, platform: "all", homePlatform: "all", error: null, search: "", sort: "default", metricsUrl: null };
 
   var APP_VERSION = "1.4.4";
 
@@ -100,6 +100,14 @@
     return d.toLocaleDateString("tr-TR", { year: "numeric", month: "short", day: "numeric" });
   }
 
+  function isNewGame(game) {
+    var base = (game && (game.createdAt || game.releaseDate)) || (game && game.latestVersion && game.latestVersion.releasedAt) || null;
+    if (!base) return false;
+    var t = new Date(base).getTime();
+    if (isNaN(t)) return false;
+    return Date.now() - t < 30 * 24 * 60 * 60 * 1000;
+  }
+
   function img(url, cls, alt) {
     if (!url) return '<div class="placeholder">🎮</div>';
     return '<img class="' + (cls || "") + '" src="' + esc(url) + '" alt="' + esc(alt || "") + '" loading="lazy" />';
@@ -129,9 +137,53 @@
     sel.innerHTML = opts;
   }
 
-  /* ---------- Home (Son Eklenenler + Kategoriler) ---------- */
+  /* ---------- Home (Sekme Sekme + Son Eklenenler) ---------- */
+
+  function renderHomePlatformGrid() {
+    var grid = $("#homePlatformGrid");
+    if (!grid) return;
+    if (!state.catalog) return;
+    var p = state.homePlatform || "all";
+    var games = ((state.catalog && state.catalog.games) || [])
+      .filter(function (g) { return p === "all" ? true : ((g.platform || "pc") === p); })
+      .slice()
+      .sort(function (a, b) {
+        var da = a.releaseDate || (a.latestVersion && a.latestVersion.releasedAt) || "";
+        var db = b.releaseDate || (b.latestVersion && b.latestVersion.releasedAt) || "";
+        return db.localeCompare(da);
+      });
+    if (!games.length) {
+      grid.innerHTML = p === "all"
+        ? '<div class="empty">Henüz oyun eklenmedi. İlk oyun çok yakında!</div>'
+        : '<div class="empty">Bu platformda henüz gerçek oyun eklenmedi. Sitemize gelen oyunlar burada görünecek.</div>';
+      return;
+    }
+    grid.innerHTML = games.slice(0, 12).map(card).join("");
+    grid.querySelectorAll(".gcard").forEach(function (el, i) {
+      el.classList.add("gcard-in");
+      if (i < 24) el.style.animationDelay = (i * 40) + "ms";
+    });
+  }
+
+  function bindHomePlatformTabs() {
+    var host = $("#homePlatformTabs");
+    if (!host) return;
+    $$(".ptab", host).forEach(function (b) {
+      b.addEventListener("click", function () {
+        var p = b.getAttribute("data-platform") || "all";
+        state.homePlatform = p;
+        $$(".ptab", host).forEach(function (x) {
+          var on = (x.getAttribute("data-platform") || "all") === p;
+          x.classList.toggle("active", on);
+          x.setAttribute("aria-selected", on ? "true" : "false");
+        });
+        renderHomePlatformGrid();
+      });
+    });
+  }
 
   function renderHomeExtras() {
+    renderHomePlatformGrid();
     var recent = $("#homeRecentGrid");
     if (recent) {
       var games = ((state.catalog && state.catalog.games) || []).slice().sort(function (a, b) {
@@ -229,26 +281,6 @@
     if (state.catalog) renderCatalog();
   });
 
-  /* Tabs (site-switch) + footer tab links + "tüm oyunlara dön" empty-state link */
-  document.addEventListener("click", function (e) {
-    var el = e.target && e.target.closest
-      ? (e.target.closest("[data-tab]") || e.target.closest("[data-tab-link]") || e.target.closest("[data-tab-default]"))
-      : null;
-    if (!el) return;
-    e.preventDefault();
-    state.platform = el.hasAttribute("data-tab-default")
-      ? "all"
-      : (el.getAttribute("data-tab") != null ? el.getAttribute("data-tab") : el.getAttribute("data-tab-link"));
-    var sel = $("#platformFilter");
-    if (sel) sel.value = state.platform;
-    state.categoryId = null;
-    var catSel = $("#catFilter");
-    if (catSel) catSel.value = "";
-    setActiveTab(state.platform);
-    location.hash = "#/katalog";
-    if (state.catalog) renderCatalog();
-  });
-
   /* Nav search: once? Enter navigates to filtered catalog */
   function bindNavSearch() {
     var input = $("#navSearch");
@@ -324,7 +356,14 @@
 
   /* ---------- Actions ---------- */
 
-  function platformInfo(g) {
+  function platformTag(g) {
+  var p = (g.platform || "pc");
+  if (p === "torrent") return { badge: "TORRENT", cls: "badge-torrent" };
+  if (p === "apk") return { badge: "APK", cls: "badge-apk" };
+  return { badge: "PC", cls: "badge-pc" };
+}
+
+function platformInfo(g) {
   var p = (g.platform || "pc");
   if (p === "torrent") {
     var t = g.torrent || {};
@@ -343,10 +382,11 @@ function primaryAction(g) {
   if (pi) return { isExternal: true, url: pi.url, platformExtra: pi };
   var file = Array.isArray(g.latestFiles) && g.latestFiles.length ? g.latestFiles[0] : null;
   var isExternal = file ? file.source === "external" : !!(g.externalUrl && !g.downloadUrl);
+  var isInternal = file && (file.source === "uploaded" || !isExternal);
   var url = isExternal
     ? ((file && file.downloadUrl) || g.externalUrl)
     : ((file && file.downloadUrl) || g.downloadUrl);
-  return { isExternal: isExternal, url: url || "", platformExtra: pi };
+  return { isExternal: isExternal, isInternal: isInternal, url: url || "", platformExtra: pi };
 }
 
 function isLinkBroken(file) {
@@ -400,46 +440,49 @@ function actionButtons(g, sizeClass) {
     var a = primaryAction(g);
     var cat = categoryName(g.categoryId);
     var file = Array.isArray(g.latestFiles) && g.latestFiles.length ? g.latestFiles[0] : null;
-    var size = file ? fmtBytes(file.fileSize) : "-";
-    var version = g.latestVersion ? g.latestVersion.version : (g.version || null);
+    var sizeFile = (Array.isArray(g.latestFiles) ? g.latestFiles : []).filter(function (f) { return f && f.fileSize > 0; })[0] || null;
+    var size = sizeFile ? fmtBytes(sizeFile.fileSize) : "-";
+var version = g.latestVersion ? g.latestVersion.version : (g.version || null);
     var featuredBadge = g.isFeatured ? '<span class="gcard-featured">★ Öne Çıkan</span>' : "";
-    var pi = primaryAction(g).platformExtra;
+    var newBadge = isNewGame(g) ? '<span class="gcard-new">✨ YENİ</span>' : "";
+    var popularBadge = g.popularityLabel && !g.isFeatured
+      ? '<span class="gcard-pop ' + (g.popularityLabel === "Çok Popüler" ? "hot" : "warm") + '">' + esc(g.popularityLabel) + "</span>"
+      : "";
+    var pi = platformTag(g);
     var platformBadge = pi
       ? '<span class="gcard-platform ' + pi.cls + '">' + pi.badge + "</span>"
       : "";
     var developer = g.developer ? g.developer : (g.publisher || "");
-    var fileBadge = a.isExternal ? "🌐 Harici" : "";
-    var urlLabel = a.isExternal ? (pi ? pi.cta : "Sayfaya Git") : "İndir";
-    var urlIcon = a.isExternal ? (pi ? pi.icon : "🌐") : "⬇";
+    var fileBadge = "";
+    var labelPi = a.platformExtra || null;
+    var urlLabel = a.isExternal ? (labelPi && labelPi.cta ? labelPi.cta : "İndir") : "İndir";
+    var urlIcon = a.isExternal ? (labelPi && labelPi.icon ? labelPi.icon : "⬇") : "⬇";
     if (!pi && a.isExternal && isLinkBroken(file)) {
       urlLabel = "Link Koptu";
       urlIcon = "⚠";
     }
+    var urlTarget = a.url;
     var dateTxt = fmtDate(g.releaseDate || (g.latestVersion && g.latestVersion.releasedAt));
     var metaTop = [
       (dateTxt ? '<span class="gcard-date">📅 ' + dateTxt + "</span>" : ""),
       (size !== "-" ? '<span class="gcard-size2">💾 ' + size + "</span>" : ""),
       (version ? '<span class="gcard-ver2">v' + esc(version) + "</span>" : "")
     ].join("");
+    var badges = [platformBadge, featuredBadge, newBadge, popularBadge].filter(function (x) { return !!x; }).join("");
     return (
       '<article class="gcard">' +
         '<a class="gcard-cover" href="#/oyun/' + g.id + '" aria-label="' + esc(g.title) + '">' +
           coverWithFallback(g) +
-          '<span class="gcard-overlay"></span>' +
-          platformBadge +
-          featuredBadge +
-          '<span class="gcard-play">' +
-            '<svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M8 5.14v13.72a1 1 0 0 0 1.5.86l11-6.86a1 1 0 0 0 0-1.72l-11-6.86a1 1 0 0 0-1.5.86z"/></svg>' +
-          "</span>" +
         "</a>" +
         '<div class="gcard-body">' +
-          (metaTop ? '<div class="gcard-meta-top">' + metaTop + "</div>" : "") +
+          (badges ? '<div class="gcard-meta gcard-badges">' + badges + "</div>" : "") +
           '<a class="gcard-title" href="#/oyun/' + g.id + '">' + esc(g.title) + "</a>" +
+          (metaTop ? '<div class="gcard-meta-top">' + metaTop + "</div>" : "") +
           (developer ? '<div class="gcard-dev">' + esc(developer) + "</div>" : "") +
-          (fileBadge ? '<div class="gcard-meta">' + '<span class="gcard-ext">' + fileBadge + "</span>" + brokenBadge(file) + "</div>" : brokenBadge(file) ? '<div class="gcard-meta">' + brokenBadge(file) + "</div>" : "") +
+          (fileBadge || brokenBadge(file) ? '<div class="gcard-meta">' + (fileBadge ? '<span class="gcard-ext">' + fileBadge + "</span>" : "") + brokenBadge(file) + "</div>" : "") +
           '<div class="gcard-actions">' +
             (a.url
-              ? '<a class="btn btn-primary btn-sm" href="' + esc(a.url) + '" target="_blank" rel="noopener nofollow" data-metric="download:' + g.id + '">' + urlIcon + " " + urlLabel + "</a>"
+              ? '<a class="btn btn-primary btn-sm" href="' + esc(urlTarget) + '" target="_blank" rel="noopener nofollow" data-metric="download:' + g.id + '">' + urlIcon + " " + urlLabel + "</a>"
               : '<span class="btn btn-ghost btn-sm" style="cursor:default">Yakında</span>') +
             '<a class="btn btn-ghost btn-sm" href="#/oyun/' + g.id + '">İncele</a>' +
           "</div>" +
@@ -451,12 +494,12 @@ function actionButtons(g, sizeClass) {
   function renderCatalog() {
     var grid = $("#catalogGrid");
     var count = $("#catalogCount");
-    var title = $("#catalogTitle");
+    var game = $("#catalogTitle");
+    var selected = state.platform || "all";
     var games = filteredGames();
-    setActiveTab(state.platform);
-    if (title) title.textContent = PLATFORM_TITLES[state.platform] || PLATFORM_TITLES.all;
-    count.textContent = (state.catalog ? state.catalog.games.length : 0) + " oyun kayıtlı · " + games.length + " gösteriliyor · " + (PLATFORM_COUNTS[state.platform] || PLATFORM_COUNTS.all);
-    renderAppsStrip(state.platform);
+    if (game) game.textContent = PLATFORM_TITLES[selected] || PLATFORM_TITLES.all;
+    count.textContent = (state.catalog ? state.catalog.games.length : 0) + " oyun kayıtlı · " + games.length + " gösteriliyor · " + (PLATFORM_COUNTS[selected] || PLATFORM_COUNTS.all);
+    renderAppsStrip(selected);
     if (!games.length) {
       grid.innerHTML = '<div class="empty">Bu platformda henüz oyun eklenmedi. Gerekli uygulamaları yukarıdan indirebilirsin.<br/><a href="#/katalog" data-tab-default="all" style="color:var(--accent)">Tüm oyunlara dön →</a></div>';
       return;
@@ -516,12 +559,6 @@ function actionButtons(g, sizeClass) {
       body;
   }
 
-  function setActiveTab(platform) {
-    $$(".site-link[data-tab]").forEach(function (el) {
-      el.classList.toggle("active", el.getAttribute("data-tab") === platform);
-    });
-  }
-
   function renderRequirements(requirements) {
     if (!requirements) return "";
     var min = requirements.minimum;
@@ -560,6 +597,8 @@ function actionButtons(g, sizeClass) {
     if (g.genre) tags.push(g.genre);
     if (version) tags.push("v" + version);
     if (g.membersOnly) tags.push("Üyelere Özel");
+    if (isNewGame(g)) tags.push("✨ YENİ");
+    if (g.popularityLabel && !g.isFeatured) tags.push(g.popularityLabel);
 
     var extraInfo = "";
     if (pi && pi.badge === "TORRENT") {
@@ -592,6 +631,9 @@ function actionButtons(g, sizeClass) {
       actionHtml = brokenNote +
         '<a class="btn btn-primary btn-lg btn-block" href="' + esc(a.url) + '" target="_blank" rel="noopener nofollow" data-metric="download:' + g.id + '">🌐 Sayfaya Git</a>' +
         '<span class="dim" style="font-size:.82rem;text-align:center">Oyun tarayıcıda açılır; dosyayı oradan indirebilirsin.</span>';
+    } else if (a.isInternal) {
+      actionHtml = '<a class="btn btn-primary btn-lg btn-block" href="' + esc(a.url) + '" download data-metric="download:' + g.id + '">⬇ İndir</a>' +
+        '<span class="dim" style="font-size:.82rem;text-align:center">Dosyayı indir ve oyunu kur.</span>';
     } else {
       actionHtml = '<a class="btn btn-primary btn-lg btn-block" href="' + esc(a.url) + '" download data-metric="download:' + g.id + '">⬇ İndir</a>' +
         '<span class="dim" style="font-size:.82rem;text-align:center">Dosyayı indir; uygulamada "Oyun Ekle" bölümünden kur.</span>';
@@ -634,7 +676,7 @@ function actionButtons(g, sizeClass) {
       "</div>" +
       '<div class="detail-head">' +
           (g.bannerUrl && !g.coverUrl ? '<div class="detail-hero-bg"><img src="' + esc(g.bannerUrl) + '" alt="" /></div>' : "") +
-          '<div class="detail-cover-wrap">' + coverWithFallback(g) + (g.isFeatured ? '<span class="gcard-featured">★ Öne Çıkan</span>' : "") + "</div>" +
+          '<div class="detail-cover-wrap">' + coverWithFallback(g) + "</div>" +
           '<div class="detail-titleblock">' +
             '<h1>' + esc(g.title) + "</h1>" +
             (g.developer ? '<div class="detail-dev">' + esc(g.developer) + "</div>" : "") +
@@ -800,9 +842,7 @@ function actionButtons(g, sizeClass) {
     },
     applyPlatform: function (v) {
       state.platform = v || "all";
-      var sel = $("#platformFilter");
-      if (sel) sel.value = state.platform;
-      setActiveTab(state.platform);
+      syncPlatformTabs(state.platform);
       renderCatalog();
     },
     applySearch: function (v) {
@@ -814,6 +854,36 @@ function actionButtons(g, sizeClass) {
       renderCatalog();
     }
   };
+
+  function syncPlatformTabs(platform) {
+    var tabs = document.querySelectorAll("#platformTabs .ptab");
+    if (!tabs || !tabs.length) return;
+    for (var i = 0; i < tabs.length; i++) {
+      var b = tabs[i];
+      var on = (b.getAttribute("data-platform") || "all") === (platform || "all");
+      b.classList.toggle("active", on);
+      b.setAttribute("aria-selected", on ? "true" : "false");
+    }
+  }
+
+  document.addEventListener("click", function (e) {
+    var el = e.target && e.target.closest
+      ? (e.target.closest("[data-tab]") || e.target.closest("[data-tab-link]") || e.target.closest("[data-tab-default]"))
+      : null;
+    if (!el) return;
+    e.preventDefault();
+    state.platform = el.hasAttribute("data-tab-default")
+      ? "all"
+      : (el.getAttribute("data-tab") != null ? el.getAttribute("data-tab") : el.getAttribute("data-tab-link"));
+    var sel = $("#platformFilter");
+    if (sel) sel.value = state.platform;
+    state.categoryId = null;
+    var catSel = $("#catFilter");
+    if (catSel) catSel.value = "";
+    syncPlatformTabs(state.platform);
+    location.hash = "#/katalog";
+    if (state.catalog) renderCatalog();
+  });
 
   window.addEventListener("hashchange", route);
   document.addEventListener("DOMContentLoaded", function () {
@@ -837,6 +907,7 @@ function actionButtons(g, sizeClass) {
     try { bindSetupWizard(); } catch (e) {}
     try { bindHomeSearch(); } catch (e) {}
     try { bindNavSearch(); } catch (e) {}
+    try { bindHomePlatformTabs(); } catch (e) {}
     if (state.catalog) {
       renderHomeExtras();
     } else {
@@ -1043,3 +1114,4 @@ function renderComments(items) {
     }).join("");
   }
 })();
+
