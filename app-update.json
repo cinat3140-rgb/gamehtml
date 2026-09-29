@@ -1,11 +1,11 @@
-﻿{
+{
   "updateAvailable": true,
   "latest": {
-    "version": "0.0.3",
-    "notes": "Oynuo PC 0.0.3: sifirdan derlendi. Oyun katalogu, platform sekmeleri (PC / Torrent / APK) ve dogrudan indirme baglantiları guncellendi. Kapak gorselleri temizlendi, indirme butonlari duzeltildi.",
-    "downloadUrl": "downloads/Oynuo_0.0.3_x64-setup.exe",
-    "portableUrl": "downloads/Oynuo_PC_0.0.3_portable.exe",
-    "sha256": "AEA8DFCD42C962B91E766247BCA4FC72BD97211FC638DCD7F902A9FF8C151FC1",
-    "portableSha256": "F0ED6FF1DF22B8E476D7A0EED97F949FF6546FC0145568FF8DFBC93DCD01AEFC"
+    "version": "1.4.5",
+    "notes": "Oynuo PC 1.4.5: sifirdan derlendi ve yayinlandi. Oyun katalogu ve platform sekmeleri (PC / Torrent / APK) guncellendi, kapak gorselleri temizlendi, indirme baglantlari dogrudan calisiyor.",
+    "downloadUrl": "downloads/Oynuo_1.4.5_x64-setup.exe",
+    "portableUrl": "downloads/Oynuo_PC_1.4.5_portable.exe",
+    "sha256": "E3CF7AC95D64FF91E78A3ACE75446A762187D1A92F1FAA9B209B5CED07E58B38",
+    "portableSha256": "306BE36D66ED2068F56F9454AB1AFC4B8E49484CC25C36485C8A4C6F00C72D68"
   }
 }
